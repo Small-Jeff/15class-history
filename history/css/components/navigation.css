@@ -1,0 +1,207 @@
+/* ===== components/navigation.css ===== */
+/* 页面导航栏、主类别导航、年级子菜单 */
+
+/* 页面导航栏 */
+.page-nav {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.nav-btn {
+    background: transparent;
+    color: var(--text-secondary);
+    border: none;
+    padding: 8px 20px;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 30px;
+    transition: var(--transition);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+}
+
+.nav-btn:hover {
+    background: var(--accent-dim);
+    color: var(--accent);
+    transform: translateY(-1px);
+}
+
+.nav-btn:active {
+    transform: translateY(0);
+}
+
+/* 主类别导航 */
+.extra-categories {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 24px 0 16px;
+    flex-wrap: wrap;
+}
+
+.extra-btn {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+    padding: 8px 28px;
+    border-radius: 40px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: var(--transition);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+}
+
+.extra-btn:hover {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-1px);
+}
+
+.extra-btn.active {
+    background: var(--accent);
+    color: #0b0c0e;
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px rgba(201, 169, 89, 0.3);
+}
+
+/* 年级子菜单 */
+.grade-submenu {
+    margin: 8px 0 32px;
+    text-align: center;
+    transition: opacity 0.2s, transform 0.2s;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.grade-submenu.hidden {
+    display: none;
+}
+
+.grade-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.grade-btn {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+    padding: 6px 20px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.grade-btn:hover {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.grade-btn.active {
+    background: var(--accent);
+    color: #0b0c0e;
+    border-color: var(--accent);
+    box-shadow: 0 2px 8px rgba(201, 169, 89, 0.25);
+}
+
+@media (max-width: 600px) {
+    .page-nav {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .nav-btn {
+        padding: 6px 14px;
+        font-size: 0.9rem;
+    }
+}
+
+/* 人物排序控件 */
+.character-sort-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 8px 0;
+}
+
+.character-sort-container label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.character-sort-container select {
+    padding: 6px 16px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-light);
+    border-radius: 30px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.character-sort-container select option {
+    background: #1a1e26;
+}
+
+.sort-order-btn {
+    padding: 6px 16px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.sort-order-btn:hover {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* 史事排序控件 */
+.record-sort-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 8px 0;
+}
+
+.record-sort-container label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.record-sort-container select {
+    padding: 6px 16px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-light);
+    border-radius: 30px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.record-sort-container select option {
+    background: #1a1e26;
+}

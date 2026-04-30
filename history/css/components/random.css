@@ -1,0 +1,74 @@
+/* ===== components/random.css ===== */
+/* 随机品读模态框 */
+
+.random-modal .modal-container {
+    max-width: 650px;
+}
+.random-filter-bar {
+    display: flex;
+    gap: 12px;
+    margin: 20px 0 16px;
+}
+
+/* 移除原 random-character-select 样式，改用公共 character-selector */
+
+.random-date-range {
+    margin: 10px 0;
+}
+.random-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+}
+.random-roll-btn {
+    padding: 12px 28px;
+    background: var(--accent);
+    color: #0b0c0e;
+    border-radius: 40px;
+    font-weight: bold;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.random-roll-btn:hover {
+    background: var(--accent-light);
+    transform: scale(1.02);
+}
+.random-record-display {
+    background: var(--card-bg);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 24px;
+    margin-top: 20px;
+    border-left: 4px solid var(--accent);
+    animation: fadeIn 0.4s ease;
+}
+.random-record-display h4 {
+    color: var(--accent);
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.random-roll-btn.rolling {
+    animation: shake 0.5s ease-in-out;
+    pointer-events: none;
+    opacity: 0.8;
+}
+@keyframes shake {
+    0%,100% { transform: rotate(0deg); }
+    25% { transform: rotate(5deg); }
+    75% { transform: rotate(-5deg); }
+}
+.random-loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--accent);
+    font-size: 1.2rem;
+}

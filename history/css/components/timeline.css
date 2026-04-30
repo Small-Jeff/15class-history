@@ -1,0 +1,98 @@
+/* ===== components/timeline.css ===== */
+/* 时间轴卡片样式 */
+
+.timeline {
+    margin: 0 auto;
+    position: relative;
+    max-width: 900px;
+}
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 36px;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+}
+.timeline-event {
+    position: relative;
+    margin-bottom: 36px;
+}
+.timeline-event-icon {
+    position: absolute;
+    top: 0;
+    left: 26px;
+    width: 18px;
+    height: 18px;
+    background: var(--accent);
+    border-radius: 2px;
+    transform: rotate(45deg);
+    box-shadow: 0 0 0 4px var(--accent-dim);
+    transition: transform 0.2s;
+    z-index: 2;
+}
+.timeline-event-copy {
+    background: var(--card-bg);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-left: 64px;
+    width: calc(100% - 64px);
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(201, 169, 89, 0.1);
+    transition: all 0.25s;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(20px);
+}
+.timeline-event-copy.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.timeline-event-copy:hover {
+    border-color: var(--border-light);
+    box-shadow: var(--shadow-lg), 0 0 0 1px var(--accent-dim);
+    transform: translateX(4px);
+}
+.timeline-event-thumbnail {
+    display: inline-block;
+    color: var(--accent);
+    font-size: 0.8rem;
+    background: rgba(0,0,0,0.3);
+    padding: 4px 14px;
+    border-radius: 30px;
+    margin-bottom: 16px;
+    font-family: monospace;
+    border: 1px solid var(--border-light);
+}
+.timeline-event-copy h3 {
+    font-size: 1.7rem;
+    color: var(--accent);
+    margin-bottom: 12px;
+    font-weight: 500;
+    line-height: 1.3;
+}
+.timeline-event-copy .content {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text-primary);
+}
+.timeline-event-copy .honorific {
+    margin-top: 20px;
+    text-align: right;
+    font-size: 0.9rem;
+    color: var(--accent);
+    border-top: 1px dashed var(--border-light);
+    padding-top: 16px;
+    white-space: pre-line;
+}
+.poem {
+    font-style: italic;
+    text-align: center;
+    margin: 1.2em 0;
+    color: var(--accent-light);
+    border-left: 2px solid var(--accent);
+    padding-left: 20px;
+}

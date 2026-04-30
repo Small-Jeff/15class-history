@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <title>2025级15班 · 班级史记</title>
+
+    <!-- 模块化 CSS -->
+    <!-- 首屏关键样式（同步加载） -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components/navigation.css">
+    <link rel="stylesheet" href="css/components/timeline.css">
+    <link rel="stylesheet" href="css/components/buttons.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/utilities.css">
+    <link rel="stylesheet" href="css/components/loading.css">
+
+    <!-- 非首屏样式（延迟加载） -->
+    <link rel="preload" href="css/components/search.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="css/components/modal.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="css/components/characters.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="css/components/random.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+    <noscript>
+        <link rel="stylesheet" href="css/components/search.css">
+        <link rel="stylesheet" href="css/components/modal.css">
+        <link rel="stylesheet" href="css/components/characters.css">
+        <link rel="stylesheet" href="css/components/random.css">
+    </noscript>
+
+    <!-- JavaScript -->
+    <script src="data.js" defer></script>
+    <script src="auth.js" defer></script>
+    <script type="module" src="js/main.js" defer></script>
+
+</head>
+
+<body>
+    <!-- 密码验证模态框（保持不变） -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <h2>📜 班史准入</h2>
+            <p>请输入您的姓名与密码，方可阅览2025级15班班级史记</p>
+            <div class="protected-tip">🔒 受保护内容，请输入密码</div>
+            <input type="text" id="username" placeholder="姓名" autocomplete="off">
+            <input type="password" id="password" placeholder="密码">
+            <button id="authBtn">入史</button>
+            <div id="authError" class="auth-error"></div>
+        </div>
+    </div>
+
+    <!-- 主内容容器 -->
+    <div class="container hidden" id="mainContent">
+        <nav class="page-nav">
+            <button class="nav-btn" data-nav="contribute">📝 如何投稿</button>
+            <button class="nav-btn" data-nav="guide">📘 新手指南</button>
+            <button class="nav-btn" data-nav="disclaimer">⚖️ 免责协议</button>
+            <button class="nav-btn" data-nav="joinus">🤝 加入我们</button>
+        </nav>
+        <!-- 功能栏 -->
+        <div class="function-bar">
+            <div class="search-section">
+                <div class="search-trigger-box" id="searchTrigger">
+                    <span class="search-icon">🔍</span>
+                    <span class="search-placeholder">点击打开搜索...</span>
+                </div>
+            </div>
+            <div class="random-section">
+                <button id="randomBtn">🎲 随机品读</button>
+            </div>
+        </div>
+
+        <!-- 标题 -->
+        <header class="hero">
+            <h1>15班史记</h1>
+            <p>七上至九下 · 英雄志与荒诞事</p>
+        </header>
+
+        <!-- 主类别导航 -->
+        <div class="extra-categories">
+            <button class="extra-btn active" data-type="zhengshi">📜 正史</button>
+            <button class="extra-btn" data-type="waishi">📖 外史</button>
+            <button class="extra-btn" data-type="xishi">🎭 戏史</button>
+            <button class="extra-btn" data-type="characters">👥 相关人物</button>
+        </div>
+
+        <!-- 年级子菜单 -->
+        <div class="grade-submenu" id="gradeSubmenu">
+            <div class="grade-buttons">
+                <button class="grade-btn" data-grade="七上">七上</button>
+                <button class="grade-btn" data-grade="七下">七下</button>
+                <button class="grade-btn" data-grade="八上">八上</button>
+                <button class="grade-btn" data-grade="八下">八下</button>
+                <button class="grade-btn" data-grade="九上">九上</button>
+                <button class="grade-btn" data-grade="九下">九下</button>
+            </div>
+        </div>
+
+        <!-- 史事排序控件（默认隐藏，正史/外史/戏史视图显示） -->
+        <div id="recordSortContainer" class="record-sort-container hidden">
+            <label for="recordSortSelect">排序：</label>
+            <select id="recordSortSelect">
+                <option value="date">时间顺序</option>
+                <option value="characters">涉及人物最多</option>
+                <option value="length">字数最多</option>
+            </select>
+            <button id="recordSortOrderBtn" class="sort-order-btn">↓ 降序</button>
+        </div>
+
+        <!-- 人物排序控件（默认隐藏） -->
+        <div id="characterSortContainer" class="character-sort-container hidden">
+            <label for="characterSortSelect">排序：</label>
+            <select id="characterSortSelect">
+                <option value="popularity">最热门（涉及史事）</option>
+                <option value="alphabet">首字母</option>
+                <option value="descLength">详情字数</option>
+            </select>
+            <button id="characterSortOrderBtn" class="sort-order-btn">↓ 降序</button>
+        </div>
+
+        <!-- 动态内容容器 -->
+        <div class="chronicle-grid" id="chronicleGrid"></div>
+
+        <footer>
+            <p>© <span id="currentYear"></span> 壹拾伍班班史编纂委员会 · 岁在丙午</p>
+            <div class="footer-motto">—— 笔落惊风雨，史成泣鬼神 ——</div>
+        </footer>
+    </div>
+
+    <!-- 返回顶部按钮 -->
+    <button id="backToTop" class="back-to-top" aria-label="返回顶部">↑</button>
+
+    <script>
+        document.getElementById('currentYear').innerText = new Date().getFullYear();
+    </script>
+</body>
+
+</html>
+
+<!--
+history/
+├── index.html                # 主页面结构，包含登录模态框、导航栏、功能栏、内容容器
+├── css/
+│   ├── base.css              # CSS 变量定义、重置样式、全局排版、背景星空
+│   ├── layout.css            # 整体布局容器、头部、功能栏、导航菜单、页脚、响应式
+│   ├── animations.css        # 全局动画关键帧定义（入场、悬停、脉冲、模态框动效等）
+│   ├── utilities.css         # 工具类（隐藏、文本居中、间距）、滚动条美化、响应式微调
+│   └── components/
+│       ├── timeline.css      # 时间轴卡片样式（垂直线条、菱形标记、卡片悬停效果）
+│       ├── characters.css    # 人物卡片网格样式（卡片背景、名称、昵称、描述）
+│       ├── modal.css         # 模态框通用样式（纪传详情、人物详情、登录框、动画）
+│       ├── search.css        # 搜索触发框、搜索模态框、筛选组件、结果列表样式
+│       ├── random.css        # 随机品读模态框样式（筛选栏、摇签按钮、显示区域）
+│       ├── navigation.css    # 页面导航栏、主类别导航、年级子菜单、排序控件样式
+│       └── buttons.css       # 独立按钮组件（返回顶部、随机触发按钮、旧版筛选按钮）
+├── js/
+│   ├── main.js               # 入口文件，初始化所有模块，注册全局键盘快捷键
+│   ├── controls.js           # 视图控制与状态管理（正史/外史/戏史/人物切换、URL状态、人物排序）
+│   ├── common.js             # 公共配置（外部链接、联系人）、全局快捷键管理、模态框辅助函数、安全数据获取
+│   ├── modal.js              # 核心模态框逻辑（纪传详情、人物详情、搜索模态框、随机品读模态框）
+│   ├── modal-extras.js       # 次要模态框逻辑（加入我们、如何投稿、新手指南、免责协议）
+│   ├── render.js             # 渲染函数（时间轴卡片渲染、人物网格渲染、骨架屏、错误处理）
+│   ├── animations.js         # 动画特效初始化（卡片入场观察器、视差标题、返回顶部按钮）
+│   └── utils.js              # 通用工具函数（HTML转义、自定义标签解析、日期排序）
+├── auth.js                   # 前端登录验证逻辑（密码哈希校验、开发模式跳过验证）
+└── data.js                   # 静态数据定义（正史记录、人物档案、外史/戏史数据）
+-->
+<!-- 
+    JS文件不超过700，超过则模块化调整
+    CSS每文件不超过500，超过则模块化调整
+    data.js行数不限
+    index.html行数不限，但应保持结构清晰，注释明确
+    modal.js行数不超过1000行，超过则拆分非重要模态框至新文件
+-->
+
+<!-- 第一版由2026年3月27日晚上10：43正式发布
+    v2. 2026年4月13日15:27 -->

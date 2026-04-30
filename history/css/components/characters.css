@@ -1,0 +1,43 @@
+/* ===== components/characters.css ===== */
+/* 人物卡片网格 */
+
+.characters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+}
+.character-card {
+    background: var(--card-bg);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 20px;
+    border: 1px solid var(--border-light);
+    transition: var(--transition);
+    cursor: pointer;
+}
+.character-card:hover {
+    background: rgba(30, 35, 45, 0.9);
+    border-color: var(--accent);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+.char-name {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--accent);
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+    margin-bottom: 10px;
+}
+.char-nicknames {
+    font-size: 0.85rem;
+    color: var(--accent-light);
+    margin-bottom: 12px;
+    opacity: 0.9;
+}
+.char-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}

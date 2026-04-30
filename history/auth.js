@@ -1,0 +1,110 @@
+// ======================= 前端登录验证 =======================
+// 预置密码的 SHA-256 哈希值（"abcd123456"）
+const CORRECT_HASH = "5fae31539e070a690c1b63720c25eb5b86084b5098a942c86c89c1d67157ed6b";
+
+function bufferToHex(buffer) {
+    return Array.from(new Uint8Array(buffer))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+}
+
+async function hashPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    return bufferToHex(hashBuffer);
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
+}
+
+// 显示欢迎信息
+function showWelcomeMessage(username, isDev = false) {
+    const hero = document.querySelector('.hero');
+    const welcomeDiv = document.createElement('div');
+    welcomeDiv.className = 'welcome-message';
+    welcomeDiv.innerHTML = isDev 
+        ? `<span>✨ 开发模式，已跳过验证 ✨</span>`
+        : `<span>✨ 欢迎！${escapeHtml(username)} ✨</span>`;
+    hero.insertAdjacentElement('afterend', welcomeDiv);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('authModal');
+    const mainContent = document.getElementById('mainContent');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const authBtn = document.getElementById('authBtn');
+    const errorDiv = document.getElementById('authError');
+
+    // 检查是否为开发模式
+    const urlParams = new URLSearchParams(window.location.search);
+    const isDevMode = urlParams.get('dev') === 'true';
+
+    if (isDevMode) {
+        // 开发模式：自动跳过登录，直接显示主内容
+        modal.classList.add('hidden');
+        mainContent.classList.remove('hidden');
+        showWelcomeMessage('', true);
+        if (typeof window.initHistory === 'function') {
+            window.initHistory();
+        }
+        return; // 不再绑定登录事件
+    }
+
+    // 正常登录模式
+    async function verifyAndEnter() {
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value;
+
+        if (!username) {
+            errorDiv.textContent = '请填写姓名';
+            return;
+        }
+        if (!password) {
+            errorDiv.textContent = '请填写密码';
+            return;
+        }
+
+        try {
+            const inputHash = await hashPassword(password);
+            if (inputHash === CORRECT_HASH) {
+                modal.classList.add('hidden');
+                mainContent.classList.remove('hidden');
+                showWelcomeMessage(username);
+                if (typeof window.initHistory === 'function') {
+                    window.initHistory();
+                } else {
+                    console.error('initHistory 未定义');
+                }
+            } else {
+                errorDiv.textContent = '密码错误，不得入史';
+                passwordInput.value = '';
+            }
+        } catch (err) {
+            console.error('验证出错:', err);
+            errorDiv.textContent = '验证失败，请重试';
+        }
+    }
+
+    authBtn.addEventListener('click', verifyAndEnter);
+    passwordInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            verifyAndEnter();
+        }
+    });
+    usernameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            verifyAndEnter();
+        }
+    });
+});

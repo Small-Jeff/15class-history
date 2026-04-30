@@ -1,0 +1,54 @@
+/* ===== utilities.css ===== */
+/* 用途：工具类、隐藏显示、滚动条美化、响应式微调 */
+
+.hidden {
+    display: none !important;
+}
+.text-accent {
+    color: var(--accent) !important;
+}
+.text-center {
+    text-align: center;
+}
+.mt-4 { margin-top: 2rem; }
+.mb-4 { margin-bottom: 2rem; }
+
+/* 搜索高亮 */
+.search-highlight {
+    background-color: rgba(201, 169, 89, 0.4);
+    color: #fff;
+    border-radius: 4px;
+    padding: 0 2px;
+    animation: pulse-glow 0.5s;
+}
+
+/* 返回顶部按钮默认隐藏 */
+.back-to-top {
+    display: none;
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+::-webkit-scrollbar-track {
+    background: #1a1e26;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-light);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .container { padding: 32px 16px; }
+    .timeline::before { left: 18px; }
+    .timeline-event-icon { left: 8px; width: 14px; height: 14px; }
+    .timeline-event-copy { margin-left: 40px; width: calc(100% - 40px); padding: 16px; }
+    .timeline-event-copy h3 { font-size: 1.4rem; }
+    .hero h1 { letter-spacing: 0.1em; }
+}
