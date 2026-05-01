@@ -14,7 +14,14 @@ export let currentCharacterSort = {
     order: 'desc'        // 'asc' | 'desc'
 };
 
+// ---------- 史事排序状态 ----------
+export let currentRecordSort = {
+    type: 'date',         // 'date' | 'characters' | 'length'
+    order: 'asc'          // 'asc' | 'desc'
+};
+
 let gradeSubmenu, gradeBtns, zhengshiBtn, waishiBtn, xishiBtn, charsBtn, grid, sortContainer;
+let recordSortContainer;
 
 // ---------- URL 状态管理 ----------
 function updateURLParams() {
@@ -89,6 +96,7 @@ function initDOMElements() {
     charsBtn = document.querySelector('.extra-btn[data-type="characters"]');
     grid = document.getElementById('chronicleGrid');
     sortContainer = document.getElementById('characterSortContainer');
+    recordSortContainer = document.getElementById('recordSortContainer');
 }
 
 function setActiveMain(activeBtn) {
@@ -107,14 +115,88 @@ function refreshUI() {
     updateSearchTriggerPlaceholder();
 }
 
+// ---------- 史事排序逻辑 ----------
+function sortRecords(records) {
+    if (!Array.isArray(records) || records.length === 0) return records;
+    const sorted = [...records];
+    const type = currentRecordSort.type;
+    const order = currentRecordSort.order;
+
+    sorted.sort((a, b) => {
+        let valA, valB;
+        if (type === 'date') {
+            if (!a.date && !b.date) return 0;
+            if (!a.date) return 1;
+            if (!b.date) return -1;
+            valA = new Date(a.date).getTime();
+            valB = new Date(b.date).getTime();
+        } else if (type === 'characters') {
+            const allChars = typeof characters !== 'undefined' ? characters : [];
+            const countMatches = (text) => {
+                return allChars.filter(c =>
+                    text.includes(c.name.toLowerCase()) ||
+                    (c.nicknames || []).some(n => text.includes(n.toLowerCase()))
+                ).length;
+            };
+            valA = countMatches((a.title + a.content).toLowerCase());
+            valB = countMatches((b.title + b.content).toLowerCase());
+        } else { // length
+            valA = (a.content || '').length;
+            valB = (b.content || '').length;
+        }
+        return order === 'asc' ? valA - valB : valB - valA;
+    });
+    return sorted;
+}
+
+function updateRecordSortControlsUI() {
+    const sortSelect = document.getElementById('recordSortSelect');
+    const orderBtn = document.getElementById('recordSortOrderBtn');
+    if (sortSelect) sortSelect.value = currentRecordSort.type;
+    if (orderBtn) orderBtn.textContent = currentRecordSort.order === 'asc' ? '↑ 升序' : '↓ 降序';
+}
+
+function initRecordSortControls() {
+    if (!recordSortContainer) return;
+    const sortSelect = document.getElementById('recordSortSelect');
+    const orderBtn = document.getElementById('recordSortOrderBtn');
+
+    sortSelect?.addEventListener('change', (e) => {
+        currentRecordSort.type = e.target.value;
+        reRenderCurrentView();
+    });
+
+    orderBtn?.addEventListener('click', () => {
+        currentRecordSort.order = currentRecordSort.order === 'asc' ? 'desc' : 'asc';
+        orderBtn.textContent = currentRecordSort.order === 'asc' ? '↑ 升序' : '↓ 降序';
+        reRenderCurrentView();
+    });
+}
+
+function reRenderCurrentView() {
+    if (currentDisplay === 'zhengshi') {
+        renderCards(sortRecords(historyData.records), grid);
+    } else if (currentDisplay === 'grade') {
+        const filtered = historyData.records.filter(r => r.grade === currentGrade);
+        renderCards(sortRecords(filtered), grid);
+    } else if (currentDisplay === 'waishi') {
+        renderCards(sortRecords(extraHistory?.records || []), grid);
+    } else if (currentDisplay === 'xishi') {
+        renderCards(sortRecords(dramaHistory?.records || []), grid);
+    }
+    refreshUI();
+}
+
 // ---------- 视图切换 ----------
 export function switchToZhengshi() {
     currentDisplay = 'zhengshi';
-    renderCards(historyData.records, grid);
+    renderCards(sortRecords(historyData.records), grid);
     grid.classList.remove('characters-mode');
     showGradeSubmenu(true);
     gradeBtns.forEach(b => b.classList.remove('active'));
     if (sortContainer) sortContainer.classList.add('hidden');
+    if (recordSortContainer) recordSortContainer.classList.remove('hidden');
+    updateRecordSortControlsUI();
     updateURLParams();
     refreshUI();
 }
@@ -122,29 +204,35 @@ export function switchToGrade(grade) {
     currentDisplay = 'grade';
     currentGrade = grade;
     const filtered = historyData.records.filter(r => r.grade === grade);
-    renderCards(filtered, grid);
+    renderCards(sortRecords(filtered), grid);
     grid.classList.remove('characters-mode');
     showGradeSubmenu(true);
     setActiveGrade(grade);
     if (sortContainer) sortContainer.classList.add('hidden');
+    if (recordSortContainer) recordSortContainer.classList.remove('hidden');
+    updateRecordSortControlsUI();
     updateURLParams();
     refreshUI();
 }
 export function switchToWaishi() {
     currentDisplay = 'waishi';
-    renderCards(extraHistory?.records || [], grid);
+    renderCards(sortRecords(extraHistory?.records || []), grid);
     grid.classList.remove('characters-mode');
     showGradeSubmenu(false);
     if (sortContainer) sortContainer.classList.add('hidden');
+    if (recordSortContainer) recordSortContainer.classList.remove('hidden');
+    updateRecordSortControlsUI();
     updateURLParams();
     refreshUI();
 }
 export function switchToXishi() {
     currentDisplay = 'xishi';
-    renderCards(dramaHistory?.records || [], grid);
+    renderCards(sortRecords(dramaHistory?.records || []), grid);
     grid.classList.remove('characters-mode');
     showGradeSubmenu(false);
     if (sortContainer) sortContainer.classList.add('hidden');
+    if (recordSortContainer) recordSortContainer.classList.remove('hidden');
+    updateRecordSortControlsUI();
     updateURLParams();
     refreshUI();
 }
@@ -239,7 +327,8 @@ function initCharacterSortControls() {
 // ---------- 初始化控制 ----------
 export function initControls() {
     initDOMElements();
-    initCharacterSortControls(); // 初始化排序控件
+    initCharacterSortControls(); // 初始化人物排序控件
+    initRecordSortControls();    // 初始化史事排序控件
 
     zhengshiBtn.addEventListener('click', () => { setActiveMain(zhengshiBtn); switchToZhengshi(); });
     gradeBtns.forEach(btn => {

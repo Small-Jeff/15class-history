@@ -350,31 +350,10 @@ const characters = [
 
 // ======================= 外史数据 =======================
 const extraHistory = {
-    records: [
-        {
-            id: 101,
-            title: "外史 · ",
-            grade: "外史",
-            content: `（示例内容）`,
-            honorific: "—— 。",
-            fullWidth: false,
-            notes: "",
-            date: ""
-        },
-    ]
+    records: []
 };
 
 // ======================= 戏史数据 =======================
 const dramaHistory = {
-    records: [
-        {
-            id: 201,
-            title: "戏史 · ",
-            grade: "戏史",
-            content: ``,
-            honorific: "—— 戏史一笔，笑谈风云。",
-            fullWidth: false,
-            date: ""
-        },
-    ]
+    records: []
 };

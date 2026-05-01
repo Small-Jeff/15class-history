@@ -94,6 +94,12 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 errorDiv.textContent = '密码错误，不得入史';
                 passwordInput.value = '';
+                // 抖动反馈
+                const authContent = document.querySelector('.auth-modal-content');
+                authContent.classList.remove('shake');
+                void authContent.offsetWidth; // 强制回流以重新触发动画
+                authContent.classList.add('shake');
+                setTimeout(() => authContent.classList.remove('shake'), 500);
             }
         } catch (err) {
             console.error('验证出错:', err);

@@ -235,3 +235,14 @@
 .auth-modal.closing .auth-modal-content {
     animation: modal-pop-out 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
+
+/* 密码错误抖动 */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+    20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+.auth-modal-content.shake {
+    animation: shake 0.4s ease-in-out;
+}

@@ -1,7 +1,6 @@
 // js/main.js
-import { initControls, initRandomRead, initSearchTrigger, initPageNav, getCurrentDataSource } from './controls.js';
+import { initControls, initRandomRead, initSearchTrigger, initPageNav } from './controls.js';
 import { initBackToTop, initParallaxHeader } from './animations.js';
-import { showSearchModal } from './modal.js';
 
 function initHistory() {
     if (typeof historyData === 'undefined') {
@@ -15,23 +14,8 @@ function initHistory() {
     initSearchTrigger();
     initParallaxHeader();
 
-    // 全局键盘快捷键
-    document.addEventListener('keydown', (e) => {
-        // Ctrl/Cmd + K 打开搜索框
-        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-            e.preventDefault();
-            showSearchModal(getCurrentDataSource());
-        }
-        // ESC 关闭当前最上层的模态框（按需）
-        if (e.key === 'Escape') {
-            const visibleModals = document.querySelectorAll('.history-modal:not(.hidden)');
-            if (visibleModals.length > 0) {
-                const topModal = visibleModals[visibleModals.length - 1];
-                const closeBtn = topModal.querySelector('.modal-close-btn');
-                if (closeBtn) closeBtn.click();
-            }
-        }
-    });
+    // 预加载 modal-extras 模块，减少点击时的延迟
+    import('./modal-extras.js').catch(() => {});
 }
 
 window.initHistory = initHistory;

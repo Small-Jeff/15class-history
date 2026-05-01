@@ -138,18 +138,23 @@ export function showCharacterModal(character) {
 }
 
 // ---------- 辅助函数 ----------
+// 辅助函数：去除自定义标签提取纯文本
+function stripTags(text) {
+    return text.replace(/\[[a-z=]+\]/g, '').replace(/\[\/[a-z=]+\]/g, '');
+}
+
 function findRelatedRecords(character) {
     const all = [...safeHistoryData.records, ...safeExtraHistory.records, ...safeDramaHistory.records];
     const name = character.name.toLowerCase();
     const nicks = (character.nicknames || []).map(n => n.toLowerCase());
     return all.filter(r => {
-        const text = (r.title + r.content).toLowerCase();
+        const text = stripTags(r.title + r.content).toLowerCase();
         return text.includes(name) || nicks.some(n => text.includes(n));
     });
 }
 function findRelatedCharacters(record) {
     if (!safeCharacters.length) return [];
-    const text = (record.title + record.content).toLowerCase();
+    const text = stripTags(record.title + record.content).toLowerCase();
     return safeCharacters.filter(c => {
         return text.includes(c.name.toLowerCase()) || (c.nicknames || []).some(n => text.includes(n.toLowerCase()));
     });
@@ -159,7 +164,7 @@ function findRelatedCharacters(record) {
 export function showSearchModal() {
     const modalId = 'searchModal';
     let modal = document.getElementById(modalId);
-    const globalDataSource = safeHistoryData.records;
+    const globalDataSource = [...safeHistoryData.records, ...safeExtraHistory.records, ...safeDramaHistory.records];
 
     if (!modal) {
         modal = document.createElement('div');
@@ -357,7 +362,7 @@ function renderSearchResults(results, keyword, container) {
 export function showRandomModal() {
     const modalId = 'randomModal';
     let modal = document.getElementById(modalId);
-    const globalDataSource = safeHistoryData.records;
+    const globalDataSource = [...safeHistoryData.records, ...safeExtraHistory.records, ...safeDramaHistory.records];
 
     if (!modal) {
         modal = document.createElement('div');

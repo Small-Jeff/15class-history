@@ -72,28 +72,3 @@
     color: #0b0c0e;
     border-color: var(--accent);
 }
-
-.back-to-top {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 48px;
-    height: 48px;
-    background: var(--accent);
-    color: #0b0c0e;
-    border-radius: 50%;
-    font-size: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: var(--shadow-md);
-    transition: var(--transition);
-    z-index: 99;
-    border: none;
-    cursor: pointer;
-}
-
-.back-to-top:hover {
-    background: var(--accent-light);
-    transform: translateY(-4px);
-}
