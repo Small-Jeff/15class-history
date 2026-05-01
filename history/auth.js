@@ -25,7 +25,6 @@ function escapeHtml(str) {
     });
 }
 
-// 显示欢迎信息
 function showWelcomeMessage(username, isDev = false) {
     const hero = document.querySelector('.hero');
     const welcomeDiv = document.createElement('div');
@@ -44,33 +43,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const authBtn = document.getElementById('authBtn');
     const errorDiv = document.getElementById('authError');
 
-    // ========== 🔧 需要修改：IP 白名单列表（填入你自己的公网 IP） ==========
+    // ========== IP 白名单列表（改成你自己的公网 IP） ==========
     const WHITELIST_IPS = [
-        '180.213.93.123',
-        ''    // 可添加多个 IP
+        '180.213.93.123'
     ];
 
-    // 从 URL 获取 dev 参数
     const urlParams = new URLSearchParams(window.location.search);
     const devParam = urlParams.get('dev');
 
-    // 手动关闭 dev 模式（访问 ?dev=off 清除）
+    // 手动关闭 dev 模式（访问 ?dev=off）
     if (devParam === 'off') {
         localStorage.removeItem('autoDev');
         sessionStorage.removeItem('ipDevPassed');
     }
-    // 手动开启 dev 模式（访问 ?dev=true 永久记住）
+    // 手动开启 dev 模式（访问 ?dev=true）
     if (devParam === 'true') {
         localStorage.setItem('autoDev', 'true');
     }
 
-    // 检测 IP 是否在白名单中
+    // 检查 IP 是否在白名单中
     async function checkIpWhitelist() {
-        // 如果本次会话已经检查通过，直接返回 true
         if (sessionStorage.getItem('ipDevPassed') === 'true') return true;
         try {
             const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 3000); // 3秒超时
+            const timeout = setTimeout(() => controller.abort(), 5000);
             const resp = await fetch('https://api.ipify.org?format=json', {
                 signal: controller.signal
             });
@@ -79,12 +75,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await resp.json();
             const clientIp = data.ip;
             if (WHITELIST_IPS.includes(clientIp)) {
-                sessionStorage.setItem('ipDevPassed', 'true'); // 本次会话直接通过
+                sessionStorage.setItem('ipDevPassed', 'true');
                 return true;
             }
         } catch (e) {
-            // IP 查询失败时，不影响正常登录，回退到手动输入密码
-            console.warn('IP 白名单检查失败，将使用普通登录', e);
+            console.warn('IP 白名单检查失败，回退到普通登录', e);
         }
         return false;
     }
@@ -101,12 +96,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof window.initHistory === 'function') {
                 window.initHistory();
             }
-            return true; // 已自动进入，无需绑定登录
+            return true;
         }
         return false;
     }
 
-    // 正常登录验证函数
+    // 正常登录验证
     async function verifyAndEnter() {
         const username = usernameInput.value.trim();
         const password = passwordInput.value;
@@ -128,8 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 showWelcomeMessage(username);
                 if (typeof window.initHistory === 'function') {
                     window.initHistory();
-                } else {
-                    console.error('initHistory 未定义');
                 }
             } else {
                 errorDiv.textContent = '密码错误，不得入史';
@@ -158,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 执行自动检测，如果未跳过则绑定登录
+    // ⚠️ 关键：等 tryAutoDev 执行完再决定要不要绑定登录
     tryAutoDev().then(skipped => {
         if (!skipped) {
             bindLoginEvents();
