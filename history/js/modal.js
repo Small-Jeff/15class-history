@@ -36,6 +36,10 @@ export function getRecordModal() {
                         <h3>👥 本卷相关人物</h3>
                         <div id="modalRelatedGrid" class="related-chars-grid"></div>
                     </div>
+                    <div id="modalShareSection" style="text-align:center;margin-top:24px;">
+                        <button id="shareRecordBtn" class="search-action-btn primary" style="display:inline-block;">📤 分享此篇</button>
+                    </div>
+                    <div id="modalCommentsContainer"></div>
                     <div class="footer-links">
                         <a class="footer-link" href="${EXTERNAL_LINKS.disclaimer}" target="_blank" rel="noopener noreferrer">📜 免责声明</a>
                         <a class="footer-link" href="${EXTERNAL_LINKS.compilation}" target="_blank" rel="noopener noreferrer">✍️ 入史编纂办法</a>
@@ -79,6 +83,24 @@ export function showRecordModal(record) {
     } else {
         grid.innerHTML = '<p class="empty-related">未识别到相关人物。</p>';
     }
+
+    // 分享按钮
+    const shareBtn = document.getElementById('shareRecordBtn');
+    if (shareBtn) {
+        const newShareBtn = shareBtn.cloneNode(true);
+        shareBtn.parentNode.replaceChild(newShareBtn, shareBtn);
+        newShareBtn.addEventListener('click', () => {
+            import('./share.js').then(m => m.shareRecord(record));
+        });
+    }
+
+    // 雁过留声 · 评注
+    const recordId = record.id || record.title;
+    const commentsContainer = document.getElementById('modalCommentsContainer');
+    if (commentsContainer) {
+        import('./comments.js').then(m => m.renderComments(recordId, commentsContainer));
+    }
+
     modal.classList.remove('hidden');
     onModalOpen('recordModal');
 }

@@ -1,9 +1,17 @@
 // 纯动画与特效
+// 全局观察器实例缓存，避免重复创建
+let scrollCleanups = [];
+
+function cleanupScrollListeners() {
+    scrollCleanups.forEach(fn => fn());
+    scrollCleanups = [];
+}
 
 export function initCardAnimations() {
     const cards = document.querySelectorAll('.timeline-event-copy');
-    if (!cards.length) return;
+    // 移除已存在的 visible 类，让动画重新触发
     cards.forEach(card => card.classList.remove('visible'));
+
     if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -12,22 +20,29 @@ export function initCardAnimations() {
                     observer.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.2, rootMargin: '0px 0px -20px 0px' });
-        cards.forEach(card => observer.observe(card));
+        }, { threshold: 0.15, rootMargin: '0px 0px -30px 0px' });
+
+        cards.forEach(card => {
+            // 如果卡片已经在视口内，直接标记可见
+            const rect = card.getBoundingClientRect();
+            const winHeight = window.innerHeight || document.documentElement.clientHeight;
+            if (rect.top < winHeight - 50) {
+                card.classList.add('visible');
+            } else {
+                observer.observe(card);
+            }
+        });
     } else {
         cards.forEach(card => card.classList.add('visible'));
     }
-    const checkVisibleNow = () => {
-        const winHeight = window.innerHeight || document.documentElement.clientHeight;
-        cards.forEach(card => {
-            const rect = card.getBoundingClientRect();
-            if (rect.top < winHeight - 100 && !card.classList.contains('visible')) {
-                card.classList.add('visible');
-            }
-        });
-    };
-    checkVisibleNow();
-    window.addEventListener('scroll', checkVisibleNow);
+}
+
+export function triggerViewEnter(container) {
+    if (!container) return;
+    container.classList.remove('view-enter');
+    // 强制回流
+    void container.offsetWidth;
+    container.classList.add('view-enter');
 }
 
 export function addHonorificEffects() {
@@ -62,18 +77,32 @@ export function initBackToTop() {
     const backBtn = document.getElementById('backToTop');
     if (!backBtn) return;
 
-    // 滚动事件
+    // 用 opacity 实现平滑淡入淡出
+    backBtn.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+
     const toggleVisibility = () => {
         if (window.scrollY > 300) {
-            backBtn.style.display = 'flex';
+            backBtn.style.opacity = '1';
+            backBtn.style.transform = 'translateY(0)';
+            backBtn.style.pointerEvents = 'auto';
         } else {
-            backBtn.style.display = 'none';
+            backBtn.style.opacity = '0';
+            backBtn.style.transform = 'translateY(10px)';
+            backBtn.style.pointerEvents = 'none';
         }
     };
 
-    // 初始化时检查一次
-    toggleVisibility();
+    // 初始隐藏
+    backBtn.style.opacity = '0';
+    backBtn.style.transform = 'translateY(10px)';
+    backBtn.style.pointerEvents = 'none';
 
     window.addEventListener('scroll', toggleVisibility);
-    backBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    backBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // 点击后立即隐藏
+        backBtn.style.opacity = '0';
+        backBtn.style.transform = 'translateY(10px)';
+        backBtn.style.pointerEvents = 'none';
+    });
 }

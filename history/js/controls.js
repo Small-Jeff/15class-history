@@ -1,7 +1,7 @@
 // js/controls.js
 import { renderCards, renderCharactersGrid } from './render.js';
 import { showCharacterModal, showSearchModal, showRandomModal } from './modal.js';
-import { initCardAnimations, addHonorificEffects } from './animations.js';
+import { initCardAnimations, addHonorificEffects, triggerViewEnter } from './animations.js';
 
 export let currentDisplay = 'zhengshi';
 export let currentGrade = '';
@@ -20,8 +20,8 @@ export let currentRecordSort = {
     order: 'asc'          // 'asc' | 'desc'
 };
 
-let gradeSubmenu, gradeBtns, zhengshiBtn, waishiBtn, xishiBtn, charsBtn, grid, sortContainer;
-let recordSortContainer;
+let gradeSubmenu, gradeBtns, zhengshiBtn, waishiBtn, xishiBtn, charsBtn, statsBtn, grid, sortContainer;
+let recordSortContainer, statsContainer, graphToggleContainer;
 
 // ---------- URL 状态管理 ----------
 function updateURLParams() {
@@ -41,9 +41,11 @@ function updateURLParams() {
     } else if (currentDisplay === 'characters') {
         url.searchParams.set('view', 'characters');
         url.searchParams.delete('grade');
-        // 保存排序参数到 URL（可选）
         url.searchParams.set('sort', currentCharacterSort.type);
         url.searchParams.set('order', currentCharacterSort.order);
+    } else if (currentDisplay === 'stats') {
+        url.searchParams.set('view', 'stats');
+        url.searchParams.delete('grade');
     }
     window.history.replaceState(null, '', url);
 }
@@ -73,6 +75,8 @@ function restoreFromURL() {
         return { view: 'xishi' };
     } else if (view === 'characters') {
         return { view: 'characters' };
+    } else if (view === 'stats') {
+        return { view: 'stats' };
     }
     return null;
 }
@@ -94,9 +98,12 @@ function initDOMElements() {
     waishiBtn = document.querySelector('.extra-btn[data-type="waishi"]');
     xishiBtn = document.querySelector('.extra-btn[data-type="xishi"]');
     charsBtn = document.querySelector('.extra-btn[data-type="characters"]');
+    statsBtn = document.querySelector('.extra-btn[data-type="stats"]');
     grid = document.getElementById('chronicleGrid');
     sortContainer = document.getElementById('characterSortContainer');
     recordSortContainer = document.getElementById('recordSortContainer');
+    statsContainer = document.getElementById('statsContainer');
+    graphToggleContainer = document.getElementById('graphToggleContainer');
 }
 
 function setActiveMain(activeBtn) {
@@ -113,6 +120,12 @@ function refreshUI() {
     initCardAnimations();
     addHonorificEffects();
     updateSearchTriggerPlaceholder();
+    // 触发内容区入场动画
+    if (grid && !grid.classList.contains('characters-mode')) {
+        triggerViewEnter(grid);
+    } else if (grid) {
+        triggerViewEnter(grid);
+    }
 }
 
 // ---------- 史事排序逻辑 ----------
@@ -187,14 +200,37 @@ function reRenderCurrentView() {
     refreshUI();
 }
 
+// ---------- 统计视图 ----------
+function hideAllExtra() {
+    if (statsContainer) statsContainer.classList.add('hidden');
+    if (graphToggleContainer) graphToggleContainer.classList.add('hidden');
+    if (recordSortContainer) recordSortContainer.classList.add('hidden');
+    if (sortContainer) sortContainer.classList.add('hidden');
+}
+
+export function switchToStats() {
+    currentDisplay = 'stats';
+    grid.classList.remove('characters-mode');
+    grid.innerHTML = '';
+    showGradeSubmenu(false);
+    hideAllExtra();
+    if (statsContainer) {
+        statsContainer.classList.remove('hidden');
+        triggerViewEnter(statsContainer);
+    }
+    // 导入并渲染统计
+    import('./stats.js').then(m => m.renderStats());
+    updateURLParams();
+}
+
 // ---------- 视图切换 ----------
 export function switchToZhengshi() {
     currentDisplay = 'zhengshi';
+    hideAllExtra();
     renderCards(sortRecords(historyData.records), grid);
     grid.classList.remove('characters-mode');
     showGradeSubmenu(true);
     gradeBtns.forEach(b => b.classList.remove('active'));
-    if (sortContainer) sortContainer.classList.add('hidden');
     if (recordSortContainer) recordSortContainer.classList.remove('hidden');
     updateRecordSortControlsUI();
     updateURLParams();
@@ -203,12 +239,12 @@ export function switchToZhengshi() {
 export function switchToGrade(grade) {
     currentDisplay = 'grade';
     currentGrade = grade;
+    hideAllExtra();
     const filtered = historyData.records.filter(r => r.grade === grade);
     renderCards(sortRecords(filtered), grid);
     grid.classList.remove('characters-mode');
     showGradeSubmenu(true);
     setActiveGrade(grade);
-    if (sortContainer) sortContainer.classList.add('hidden');
     if (recordSortContainer) recordSortContainer.classList.remove('hidden');
     updateRecordSortControlsUI();
     updateURLParams();
@@ -216,10 +252,10 @@ export function switchToGrade(grade) {
 }
 export function switchToWaishi() {
     currentDisplay = 'waishi';
+    hideAllExtra();
     renderCards(sortRecords(extraHistory?.records || []), grid);
     grid.classList.remove('characters-mode');
     showGradeSubmenu(false);
-    if (sortContainer) sortContainer.classList.add('hidden');
     if (recordSortContainer) recordSortContainer.classList.remove('hidden');
     updateRecordSortControlsUI();
     updateURLParams();
@@ -227,10 +263,10 @@ export function switchToWaishi() {
 }
 export function switchToXishi() {
     currentDisplay = 'xishi';
+    hideAllExtra();
     renderCards(sortRecords(dramaHistory?.records || []), grid);
     grid.classList.remove('characters-mode');
     showGradeSubmenu(false);
-    if (sortContainer) sortContainer.classList.add('hidden');
     if (recordSortContainer) recordSortContainer.classList.remove('hidden');
     updateRecordSortControlsUI();
     updateURLParams();
@@ -277,14 +313,17 @@ export function getSortedCharacters() {
 
 export function switchToCharacters() {
     currentDisplay = 'characters';
+    hideAllExtra();
     const sortedChars = getSortedCharacters();
     renderCharactersGrid(sortedChars, grid, char => showCharacterModal(char));
     grid.classList.add('characters-mode');
     showGradeSubmenu(false);
     if (sortContainer) sortContainer.classList.remove('hidden');
+    if (graphToggleContainer) graphToggleContainer.classList.remove('hidden');
     updateURLParams();
     refreshUI();
     updateSortControlsUI();
+    triggerViewEnter(grid);
 }
 
 // 更新排序下拉菜单的显示状态
@@ -337,6 +376,17 @@ export function initControls() {
     waishiBtn.addEventListener('click', () => { setActiveMain(waishiBtn); switchToWaishi(); });
     xishiBtn.addEventListener('click', () => { setActiveMain(xishiBtn); switchToXishi(); });
     charsBtn.addEventListener('click', () => { setActiveMain(charsBtn); switchToCharacters(); });
+    statsBtn.addEventListener('click', () => { setActiveMain(statsBtn); switchToStats(); });
+
+    // 关系图谱按钮
+    const graphBtn = document.getElementById('graphToggleBtn');
+    graphBtn?.addEventListener('click', () => {
+        if (typeof window.showGraphModal === 'function') {
+            window.showGraphModal();
+        } else {
+            import('./graph.js').then(m => m.showGraphModal());
+        }
+    });
 
     const restored = restoreFromURL();
     if (restored) {
@@ -354,6 +404,9 @@ export function initControls() {
         } else if (restored.view === 'characters') {
             setActiveMain(charsBtn);
             switchToCharacters();
+        } else if (restored.view === 'stats') {
+            setActiveMain(statsBtn);
+            switchToStats();
         } else {
             switchToGrade(DEFAULT_GRADE);
         }

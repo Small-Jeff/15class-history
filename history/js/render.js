@@ -1,5 +1,5 @@
 // js/render.js
-import { escapeHtml, formatContent, sortByDate } from './utils.js';
+import { escapeHtml, formatContent } from './utils.js';
 import { showRecordModal } from './modal.js';
 
 function showLoading(container) {
@@ -30,57 +30,49 @@ export function renderCards(records, container) {
             return;
         }
 
-        // 使用 requestAnimationFrame 避免骨架屏闪烁
-        showLoading(container);
-        requestAnimationFrame(() => {
-            try {
-                container.innerHTML = '';
-                const timeline = document.createElement('ul');
-                timeline.className = 'timeline';
-                container.appendChild(timeline);
+        // 直接渲染，不经过骨架屏，避免闪烁
+        container.innerHTML = '';
+        const timeline = document.createElement('ul');
+        timeline.className = 'timeline';
+        container.appendChild(timeline);
 
-                const sorted = sortByDate(records);
-                sorted.forEach(record => {
-                    const li = document.createElement('li');
-                    li.className = 'timeline-event';
-                    const icon = document.createElement('label');
-                    icon.className = 'timeline-event-icon';
-                    li.appendChild(icon);
-                    const copyDiv = document.createElement('div');
-                    copyDiv.className = 'timeline-event-copy';
+        // 直接使用传进来的顺序（由 controls.js 的 sortRecords 处理）
+        records.forEach(record => {
+            const li = document.createElement('li');
+            li.className = 'timeline-event';
+            const icon = document.createElement('label');
+            icon.className = 'timeline-event-icon';
+            li.appendChild(icon);
+            const copyDiv = document.createElement('div');
+            copyDiv.className = 'timeline-event-copy';
 
-                    let dateHtml = '';
-                    if (record.date) {
-                        const dateObj = new Date(record.date);
-                        if (!isNaN(dateObj)) {
-                            const formattedDate = `${dateObj.getFullYear()}年${dateObj.getMonth() + 1}月${dateObj.getDate()}日`;
-                            dateHtml = `<div class="timeline-event-thumbnail">📅 ${formattedDate}</div>`;
-                        }
-                    }
-
-                    const contentHtml = formatContent(record.content || '');
-                    const titleHtml = escapeHtml(record.title || '无标题');
-                    const honorificHtml = escapeHtml(record.honorific || '').replace(/\n/g, '<br>');
-
-                    copyDiv.innerHTML = `
-                        ${dateHtml}
-                        <h3>${titleHtml}</h3>
-                        <div class="content">${contentHtml}</div>
-                        <div class="honorific">${honorificHtml}</div>
-                    `;
-
-                    copyDiv.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        showRecordModal(record);
-                    });
-
-                    li.appendChild(copyDiv);
-                    timeline.appendChild(li);
-                });
-            } catch (innerError) {
-                console.error('渲染卡片内容失败:', innerError);
-                showError(container);
+            let dateHtml = '';
+            if (record.date) {
+                const dateObj = new Date(record.date);
+                if (!isNaN(dateObj)) {
+                    const formattedDate = `${dateObj.getFullYear()}年${dateObj.getMonth() + 1}月${dateObj.getDate()}日`;
+                    dateHtml = `<div class="timeline-event-thumbnail">📅 ${formattedDate}</div>`;
+                }
             }
+
+            const contentHtml = formatContent(record.content || '');
+            const titleHtml = escapeHtml(record.title || '无标题');
+            const honorificHtml = escapeHtml(record.honorific || '').replace(/\n/g, '<br>');
+
+            copyDiv.innerHTML = `
+                ${dateHtml}
+                <h3>${titleHtml}</h3>
+                <div class="content">${contentHtml}</div>
+                <div class="honorific">${honorificHtml}</div>
+            `;
+
+            copyDiv.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showRecordModal(record);
+            });
+
+            li.appendChild(copyDiv);
+            timeline.appendChild(li);
         });
     } catch (error) {
         console.error('渲染卡片失败:', error);

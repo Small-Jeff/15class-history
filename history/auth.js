@@ -1,4 +1,6 @@
 // ======================= 前端登录验证 =======================
+// 标记 initHistory 尚未执行（由 main.js 调用后设为 true）
+window._historyInitialized = false;
 // 预置密码的 SHA-256 哈希值（"abcd123456"）
 const CORRECT_HASH = "5fae31539e070a690c1b63720c25eb5b86084b5098a942c86c89c1d67157ed6b";
 

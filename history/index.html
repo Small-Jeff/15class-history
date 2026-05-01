@@ -25,17 +25,26 @@
     <link rel="preload" href="css/components/modal.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <link rel="preload" href="css/components/characters.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <link rel="preload" href="css/components/random.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="css/components/stats.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="css/components/graph.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="css/components/comments.css" as="style" onload="this.onload=null;this.rel='stylesheet'>
 
     <noscript>
         <link rel="stylesheet" href="css/components/search.css">
         <link rel="stylesheet" href="css/components/modal.css">
         <link rel="stylesheet" href="css/components/characters.css">
         <link rel="stylesheet" href="css/components/random.css">
+        <link rel="stylesheet" href="css/components/stats.css">
+        <link rel="stylesheet" href="css/components/graph.css">
+        <link rel="stylesheet" href="css/components/comments.css">
     </noscript>
 
     <!-- JavaScript -->
     <script src="data.js" defer></script>
     <script src="auth.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/vis-network@9.1.9/standalone/umd/vis-network.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
     <script type="module" src="js/main.js" defer></script>
 
 </head>
@@ -87,6 +96,24 @@
             <button class="extra-btn" data-type="waishi">📖 外史</button>
             <button class="extra-btn" data-type="xishi">🎭 戏史</button>
             <button class="extra-btn" data-type="characters">👥 相关人物</button>
+            <button class="extra-btn" data-type="stats">📊 统计</button>
+        </div>
+
+        <!-- 人物关联图按钮（人物视图下显示） -->
+        <div id="graphToggleContainer" class="graph-toggle-container hidden">
+            <button id="graphToggleBtn" class="graph-toggle-btn">🔗 关系图谱</button>
+        </div>
+
+        <!-- 统计容器（默认隐藏） -->
+        <div id="statsContainer" class="stats-container hidden">
+            <div class="stats-tabs">
+                <button class="stats-tab active" data-chart="characters">👤 人物榜</button>
+                <button class="stats-tab" data-chart="length">📏 字数分布</button>
+                <button class="stats-tab" data-chart="timeline">📅 时间分布</button>
+            </div>
+            <div class="stats-charts">
+                <canvas id="statsChart"></canvas>
+            </div>
         </div>
 
         <!-- 年级子菜单 -->
