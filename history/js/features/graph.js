@@ -103,6 +103,54 @@ function buildGraphData() {
     return { nodes, edges };
 }
 
+function downloadGraph() {
+    const network = document.getElementById('graphNetwork');
+    if (!network || !networkInstance) return;
+
+    // 从 vis-network 拿到 canvas 元素
+    const canvasEl = network.querySelector('canvas');
+    if (!canvasEl) return;
+
+    // 目标输出尺寸 1200x1500（4:5 比例）
+    const OUT_W = 1200, OUT_H = 1500;
+
+    // 暂存原始实际尺寸（getBoundingClientRect 返回 px 整数）
+    const origRect = network.getBoundingClientRect();
+
+    // 放大容器，让 vis-network 在高分辨率下重绘
+    network.style.width = OUT_W + 'px';
+    network.style.height = OUT_H + 'px';
+    networkInstance.setSize(OUT_W, OUT_H);
+    networkInstance.fit({ animation: false });
+
+    // 等两帧让 canvas 完成绘制
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            // 此时 canvasEl 已经以 OUT_W x OUT_H 渲染完毕
+            const out = document.createElement('canvas');
+            out.width = OUT_W;
+            out.height = OUT_H;
+            const ctx = out.getContext('2d');
+            ctx.drawImage(canvasEl, 0, 0, OUT_W, OUT_H);
+
+            out.toBlob(blob => {
+                // 恢复原始尺寸
+                network.style.width = origRect.width + 'px';
+                network.style.height = origRect.height + 'px';
+                networkInstance.setSize(origRect.width, origRect.height);
+                networkInstance.fit({ animation: false });
+
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = '人物关系图谱.png';
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        });
+    });
+}
+
 export function showGraphModal() {
     const modalId = 'graphModal';
     let modal = document.getElementById(modalId);
@@ -131,9 +179,15 @@ export function showGraphModal() {
                             关联线
                         </span>
                     </div>
+                    <div style="text-align:center;margin-top:16px;">
+                        <button id="downloadGraphBtn" class="search-action-btn secondary" style="display:inline-flex;align-items:center;gap:6px;">📥 下载图谱</button>
+                    </div>
                 </div>
             </div>
         `;
+
+        // 下载图谱按钮
+        modal.querySelector('#downloadGraphBtn').addEventListener('click', downloadGraph);
         document.body.appendChild(modal);
         bindModalClose(modal, modalId, () => {
             if (networkInstance) {
