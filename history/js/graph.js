@@ -209,8 +209,8 @@ function initGraph(modal) {
         interaction: {
             hover: true,
             tooltipDelay: 200,
-            navigationButtons: true,
-            keyboard: true
+            navigationButtons: false,
+            keyboard: false
         },
         edges: {
             smooth: { type: 'curvedCW', roundness: 0.2 }
