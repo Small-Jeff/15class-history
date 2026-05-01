@@ -1,5 +1,5 @@
 // js/render.js
-import { escapeHtml, formatContent } from './utils.js';
+import { escapeHtml, formatContent } from '../utils.js';
 import { showRecordModal } from './modal.js';
 
 function showLoading(container) {

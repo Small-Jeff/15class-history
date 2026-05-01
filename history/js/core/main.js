@@ -1,8 +1,8 @@
 // js/main.js
 import { initControls, initRandomRead, initSearchTrigger, initPageNav } from './controls.js';
-import { initBackToTop, initParallaxHeader } from './animations.js';
-import { initStats } from './stats.js';
-import { showGraphModal } from './graph.js';
+import { initBackToTop, initParallaxHeader } from '../effects/animations.js';
+import { initStats } from '../features/stats.js';
+import { showGraphModal } from '../features/graph.js';
 
 function initHistory() {
     if (window._historyInitialized) return; // 避免重复执行

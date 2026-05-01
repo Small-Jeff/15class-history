@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.html": "html"
+    },
+    "javascript.validate.enable": true,
+    "html.validate.scripts": false,
+    "css.validate": true
+}

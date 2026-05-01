@@ -1,6 +1,6 @@
 // js/graph.js — 关系图谱
-import { showCharacterModal } from './modal.js';
-import { onModalOpen, bindModalClose } from './common.js';
+import { showCharacterModal } from '../ui/modal.js';
+import { onModalOpen, bindModalClose } from '../core/common.js';
 
 let networkInstance = null;
 

@@ -178,22 +178,7 @@
     animation: glow-pulse 2s infinite;
 }
 
-/* 结果项渐显 */
-@keyframes result-slide {
-    from {
-        opacity: 0;
-        transform: translateX(-8px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-.result-item-compact {
-    animation: result-slide 0.2s ease forwards;
-}
+/* 结果项渐显（已移至 search.css） */
 
 /* 背景光晕移动 */
 @keyframes bg-shimmer {
@@ -470,16 +455,6 @@ select:focus {
 /* 加载骨架屏优化 */
 .skeleton-card {
     animation: skeleton-loading 1.2s ease-in-out infinite;
-}
-
-/* 搜索结果项悬停 */
-.result-item-compact {
-    transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1);
-}
-
-.result-item-compact:hover {
-    transform: translateX(6px) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* 相关人物卡片点击过渡 */

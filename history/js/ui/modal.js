@@ -1,5 +1,5 @@
 // js/modal.js
-import { escapeHtml, formatContent } from './utils.js';
+import { escapeHtml, formatContent } from '../utils.js';
 import {
     EXTERNAL_LINKS,
     safeHistoryData,
@@ -10,7 +10,7 @@ import {
     ensureShortcuts,
     onModalOpen,
     bindModalClose
-} from './common.js';
+} from '../core/common.js';
 
 ensureShortcuts();
 
@@ -90,7 +90,7 @@ export function showRecordModal(record) {
         const newShareBtn = shareBtn.cloneNode(true);
         shareBtn.parentNode.replaceChild(newShareBtn, shareBtn);
         newShareBtn.addEventListener('click', () => {
-            import('./share.js').then(m => m.shareRecord(record));
+            import('../features/share.js').then(m => m.shareRecord(record));
         });
     }
 
@@ -98,7 +98,7 @@ export function showRecordModal(record) {
     const recordId = record.id || record.title;
     const commentsContainer = document.getElementById('modalCommentsContainer');
     if (commentsContainer) {
-        import('./comments.js').then(m => m.renderComments(recordId, commentsContainer));
+        import('../features/comments.js').then(m => m.renderComments(recordId, commentsContainer));
     }
 
     modal.classList.remove('hidden');
@@ -227,6 +227,7 @@ export function showSearchModal() {
                     <div class="search-results-area" id="searchResultsArea">
                         <p class="empty-notes">输入关键词开始搜索</p>
                     </div>
+                    <div id="searchResultCount" style="text-align:right;margin-top:8px;font-size:0.85rem;color:var(--text-muted);"></div>
                 </div>
             </div>
         `;
@@ -236,6 +237,7 @@ export function showSearchModal() {
         const innerInput = document.getElementById('innerSearchInput');
         const searchBtn = document.getElementById('innerSearchBtn');
         const clearBtn = document.getElementById('innerClearBtn');
+        const resultCount = document.getElementById('searchResultCount');
         const filterOpts = modal.querySelectorAll('.filter-option');
         const charContainer = document.getElementById('characterSelectorContainer');
         const charSelect = document.getElementById('characterSelect');
@@ -288,13 +290,23 @@ export function showSearchModal() {
 
         clearDateBtn.addEventListener('click', () => { startDate.value = ''; endDate.value = ''; });
 
+        // 防抖工具
+        let searchTimer = null;
+        const debouncedSearch = () => {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(performSearch, 250);
+        };
+
         const performSearch = () => {
             const keyword = innerInput.value.trim().toLowerCase();
             let results = [...globalDataSource];
 
             if (keyword) {
                 results = results.filter(r =>
-                    (r.title || '').toLowerCase().includes(keyword) || (r.content || '').toLowerCase().includes(keyword)
+                    (r.title || '').toLowerCase().includes(keyword) ||
+                    (r.content || '').toLowerCase().includes(keyword) ||
+                    (r.honorific || '').toLowerCase().includes(keyword) ||
+                    (r.notes || '').toLowerCase().includes(keyword)
                 );
             }
 
@@ -326,10 +338,12 @@ export function showSearchModal() {
                 if (selectedGrade) results = results.filter(r => r.grade === selectedGrade);
             }
 
-            renderSearchResults(results, keyword, resultsArea);
+            renderSearchResults(results, keyword, resultsArea, resultCount);
         };
 
         searchBtn.addEventListener('click', performSearch);
+        innerInput.addEventListener('input', debouncedSearch);
+        innerInput.addEventListener('keypress', e => e.key === 'Enter' && performSearch());
         clearBtn.addEventListener('click', () => {
             innerInput.value = '';
             filterOpts.forEach(o => o.classList.remove('active'));
@@ -342,14 +356,19 @@ export function showSearchModal() {
             startDate.value = ''; endDate.value = '';
             gradeSelect.value = '';
             resultsArea.innerHTML = '<p class="empty-notes">输入关键词开始搜索</p>';
+            if (resultCount) resultCount.textContent = '';
         });
-        innerInput.addEventListener('keypress', e => e.key === 'Enter' && performSearch());
     }
     modal.classList.remove('hidden');
     onModalOpen(modalId);
+    // 自动聚焦
+    setTimeout(() => document.getElementById('innerSearchInput')?.focus(), 100);
 }
 
-function renderSearchResults(results, keyword, container) {
+function renderSearchResults(results, keyword, container, countEl) {
+    if (countEl) {
+        countEl.textContent = results.length ? `共找到 ${results.length} 条结果` : '';
+    }
     if (!results.length) {
         container.innerHTML = '<p class="empty-notes">未找到匹配记录</p>';
         return;
@@ -478,7 +497,7 @@ export function showRandomModal() {
         });
         clearDate.addEventListener('click', () => { startDate.value = ''; endDate.value = ''; });
 
-        rollBtn.addEventListener('click', async () => {
+        const doRoll = () => {
             abortController.abort();
             abortController = new AbortController();
             const signal = abortController.signal;
@@ -518,6 +537,7 @@ export function showRandomModal() {
             }
 
             rollBtn.classList.add('rolling');
+            rollBtn.textContent = '🎲 摇签中…';
             displayDiv.innerHTML = '<div class="random-loading">🎲 摇签中...</div>';
 
             setTimeout(() => {
@@ -536,15 +556,20 @@ export function showRandomModal() {
                 };
                 displayDiv.addEventListener('click', onClick, { signal });
                 rollBtn.classList.remove('rolling');
+                rollBtn.textContent = '🎲 再来一篇';
             }, 300);
-        });
+        };
+        rollBtn.addEventListener('click', doRoll);
         modal._abortController = abortController;
     }
     const displayDiv = document.getElementById('randomRecordDisplay');
     displayDiv.innerHTML = '<p class="empty-notes">点击「摇一签」开始</p>';
     displayDiv.style.cursor = 'default';
     const rollBtn = document.getElementById('randomRollBtn');
-    if (rollBtn) rollBtn.classList.remove('rolling');
+    if (rollBtn) {
+        rollBtn.classList.remove('rolling');
+        rollBtn.textContent = '🎲 摇一签';
+    }
     modal.classList.remove('hidden');
     onModalOpen(modalId);
 }

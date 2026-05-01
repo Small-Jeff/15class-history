@@ -11,33 +11,26 @@
 
     <!-- 模块化 CSS -->
     <!-- 首屏关键样式（同步加载） -->
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/base/base.css">
+    <link rel="stylesheet" href="css/layout/layout.css">
     <link rel="stylesheet" href="css/components/navigation.css">
     <link rel="stylesheet" href="css/components/timeline.css">
     <link rel="stylesheet" href="css/components/buttons.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <link rel="stylesheet" href="css/utilities.css">
+    <link rel="stylesheet" href="css/effects/animations.css">
+    <link rel="stylesheet" href="css/effects/utilities.css">
     <link rel="stylesheet" href="css/components/loading.css">
 
     <!-- 非首屏样式（延迟加载） -->
-    <link rel="preload" href="css/components/search.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="css/components/modal.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="css/components/characters.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="css/components/random.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="css/components/stats.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="css/components/graph.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="css/components/comments.css" as="style" onload="this.onload=null;this.rel='stylesheet'>
-
-    <noscript>
-        <link rel="stylesheet" href="css/components/search.css">
-        <link rel="stylesheet" href="css/components/modal.css">
-        <link rel="stylesheet" href="css/components/characters.css">
-        <link rel="stylesheet" href="css/components/random.css">
-        <link rel="stylesheet" href="css/components/stats.css">
-        <link rel="stylesheet" href="css/components/graph.css">
-        <link rel="stylesheet" href="css/components/comments.css">
-    </noscript>
+    <link rel="preload" href="css/components/search.css" as="style">
+    <link rel="preload" href="css/components/modal.css" as="style">
+    <link rel="preload" href="css/components/characters.css" as="style">
+    <link rel="preload" href="css/components/random.css" as="style">
+    <link rel="preload" href="css/components/stats.css" as="style">
+    <link rel="preload" href="css/components/graph.css" as="style">
+    <link rel="preload" href="css/components/comments.css" as="style">
+    <script>
+    (function(){var d=["css/components/search.css","css/components/modal.css","css/components/characters.css","css/components/random.css","css/components/stats.css","css/components/graph.css","css/components/comments.css"];d.forEach(function(h){var l=document.createElement("link");l.rel="stylesheet";l.href=h;document.head.appendChild(l)})})();
+    </script>
 
     <!-- JavaScript -->
     <script src="data.js" defer></script>
@@ -45,7 +38,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/vis-network@9.1.9/standalone/umd/vis-network.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
-    <script type="module" src="js/main.js" defer></script>
+    <script type="module" src="js/core/main.js" defer></script>
 
 </head>
 
@@ -171,31 +164,46 @@
 
 <!--
 history/
-├── index.html                # 主页面结构，包含登录模态框、导航栏、功能栏、内容容器
+├── index.html                # 主页面结构：登录模态框、导航栏、功能栏、内容容器
+├── data.js                   # 静态数据（正史/外史/戏史记录、人物档案）
+├── auth.js                   # 前端登录验证（SHA-256 哈希校验、?dev 开发模式跳过）
 ├── css/
-│   ├── base.css              # CSS 变量定义、重置样式、全局排版、背景星空
-│   ├── layout.css            # 整体布局容器、头部、功能栏、导航菜单、页脚、响应式
-│   ├── animations.css        # 全局动画关键帧定义（入场、悬停、脉冲、模态框动效等）
-│   ├── utilities.css         # 工具类（隐藏、文本居中、间距）、滚动条美化、响应式微调
+│   ├── base/
+│   │   └── base.css          # CSS 变量定义、重置样式、全局排版、背景星空
+│   ├── layout/
+│   │   └── layout.css        # 整体布局容器、头部、功能栏、页脚、响应式
+│   ├── effects/
+│   │   ├── animations.css    # 全局动画关键帧 + UX 增强
+│   │   └── utilities.css     # 工具类、滚动条美化、响应式微调
 │   └── components/
-│       ├── timeline.css      # 时间轴卡片样式（垂直线条、菱形标记、卡片悬停效果）
-│       ├── characters.css    # 人物卡片网格样式（卡片背景、名称、昵称、描述）
-│       ├── modal.css         # 模态框通用样式（纪传详情、人物详情、登录框、动画）
-│       ├── search.css        # 搜索触发框、搜索模态框、筛选组件、结果列表样式
-│       ├── random.css        # 随机品读模态框样式（筛选栏、摇签按钮、显示区域）
-│       ├── navigation.css    # 页面导航栏、主类别导航、年级子菜单、排序控件样式
-│       └── buttons.css       # 独立按钮组件（返回顶部、随机触发按钮、旧版筛选按钮）
+│       ├── buttons.css       # 独立按钮组件（返回顶部、随机触发按钮）
+│       ├── characters.css    # 人物卡片网格样式
+│       ├── comments.css      # 雁过留声评注区
+│       ├── graph.css         # 关系图谱容器与图例
+│       ├── loading.css       # 加载骨架屏样式
+│       ├── modal.css         # 模态框通用样式
+│       ├── navigation.css    # 导航栏、类别、年级、排序控件
+│       ├── random.css        # 随机品读模态框
+│       ├── search.css        # 搜索触发框与模态框
+│       ├── stats.css         # 统计看板图表
+│       └── timeline.css      # 时间轴卡片样式
 ├── js/
-│   ├── main.js               # 入口文件，初始化所有模块，注册全局键盘快捷键
-│   ├── controls.js           # 视图控制与状态管理（正史/外史/戏史/人物切换、URL状态、人物排序）
-│   ├── common.js             # 公共配置（外部链接、联系人）、全局快捷键管理、模态框辅助函数、安全数据获取
-│   ├── modal.js              # 核心模态框逻辑（纪传详情、人物详情、搜索模态框、随机品读模态框）
-│   ├── modal-extras.js       # 次要模态框逻辑（加入我们、如何投稿、新手指南、免责协议）
-│   ├── render.js             # 渲染函数（时间轴卡片渲染、人物网格渲染、骨架屏、错误处理）
-│   ├── animations.js         # 动画特效初始化（卡片入场观察器、视差标题、返回顶部按钮）
-│   └── utils.js              # 通用工具函数（HTML转义、自定义标签解析、日期排序）
-├── auth.js                   # 前端登录验证逻辑（密码哈希校验、开发模式跳过验证）
-└── data.js                   # 静态数据定义（正史记录、人物档案、外史/戏史数据）
+│   ├── core/
+│   │   ├── main.js           # 入口文件，初始化所有模块
+│   │   ├── controls.js       # 视图控制与状态管理
+│   │   └── common.js         # 公共配置、快捷键、模态框栈
+│   ├── ui/
+│   │   ├── modal.js          # 核心模态框（纪传详情/人物/搜索/随机）
+│   │   ├── modal-extras.js   # 次要模态框（加入/投稿/指南/免责）
+│   │   └── render.js         # 渲染函数（卡片、网格、空状态）
+│   ├── effects/
+│   │   └── animations.js     # 动画特效（入场观察器、视差、过渡）
+│   ├── features/
+│   │   ├── stats.js          # 统计看板（Chart.js 图表）
+│   │   ├── graph.js          # 关系图谱（vis-network）
+│   │   ├── share.js          # 分享卡片（html2canvas）
+│   │   └── comments.js       # 雁过留声（localStorage 评注）
+│   └── utils.js              # 工具函数（转义、标签解析、排序）
 -->
 <!-- 
     JS文件不超过700，超过则模块化调整

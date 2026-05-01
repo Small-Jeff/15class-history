@@ -1,12 +1,12 @@
 // js/modal-extras.js
-import { escapeHtml } from './utils.js';
+import { escapeHtml } from '../utils.js';
 import {
     EXTERNAL_LINKS,
     CONTACT_PERSONS,
     ensureShortcuts,
     onModalOpen,
     bindModalClose
-} from './common.js';
+} from '../core/common.js';
 
 ensureShortcuts();
 

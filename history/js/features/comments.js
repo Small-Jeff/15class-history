@@ -1,5 +1,5 @@
 // js/comments.js — 雁过留声 · 本地评注
-import { escapeHtml } from './utils.js';
+import { escapeHtml } from '../utils.js';
 
 const STORAGE_KEY_PREFIX = 'hs_comments_';
 const USER_NAME_KEY = 'hs_comment_user';

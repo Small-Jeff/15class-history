@@ -1,7 +1,7 @@
 // js/controls.js
-import { renderCards, renderCharactersGrid } from './render.js';
-import { showCharacterModal, showSearchModal, showRandomModal } from './modal.js';
-import { initCardAnimations, addHonorificEffects, triggerViewEnter } from './animations.js';
+import { renderCards, renderCharactersGrid } from '../ui/render.js';
+import { showCharacterModal, showSearchModal, showRandomModal } from '../ui/modal.js';
+import { initCardAnimations, addHonorificEffects, triggerViewEnter } from '../effects/animations.js';
 
 export let currentDisplay = 'zhengshi';
 export let currentGrade = '';
@@ -219,7 +219,7 @@ export function switchToStats() {
         triggerViewEnter(statsContainer);
     }
     // 导入并渲染统计
-    import('./stats.js').then(m => m.renderStats());
+    import('../features/stats.js').then(m => m.renderStats());
     updateURLParams();
 }
 
@@ -384,7 +384,7 @@ export function initControls() {
         if (typeof window.showGraphModal === 'function') {
             window.showGraphModal();
         } else {
-            import('./graph.js').then(m => m.showGraphModal());
+            import('../features/graph.js').then(m => m.showGraphModal());
         }
     });
 
@@ -427,7 +427,7 @@ export function getCurrentDataSource() {
 export function initSearchTrigger() {
     const trigger = document.getElementById('searchTrigger');
     trigger?.addEventListener('click', () => {
-        import('./modal.js').then(m => m.showSearchModal());
+        import('../ui/modal.js').then(m => m.showSearchModal());
     });
     updateSearchTriggerPlaceholder();
 }
@@ -439,7 +439,7 @@ export function initRandomRead() {
             alert('人物视图暂不支持随机品读');
             return;
         }
-        import('./modal.js').then(m => m.showRandomModal());
+        import('../ui/modal.js').then(m => m.showRandomModal());
     });
 }
 
@@ -450,16 +450,16 @@ export function initPageNav() {
             const navType = btn.dataset.nav;
             switch (navType) {
                 case 'contribute':
-                    import('./modal-extras.js').then(m => m.showContributeModal());
+                    import('../ui/modal-extras.js').then(m => m.showContributeModal());
                     break;
                 case 'guide':
-                    import('./modal-extras.js').then(m => m.showGuideModal());
+                    import('../ui/modal-extras.js').then(m => m.showGuideModal());
                     break;
                 case 'disclaimer':
-                    import('./modal-extras.js').then(m => m.showDisclaimerModal());
+                    import('../ui/modal-extras.js').then(m => m.showDisclaimerModal());
                     break;
                 case 'joinus':
-                    import('./modal-extras.js').then(m => m.showJoinUsModal());
+                    import('../ui/modal-extras.js').then(m => m.showJoinUsModal());
                     break;
             }
         });

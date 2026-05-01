@@ -1,5 +1,5 @@
 // js/share.js — 分享卡片
-import { escapeHtml, formatContent } from './utils.js';
+import { escapeHtml, formatContent } from '../utils.js';
 
 export function shareRecord(record) {
     const card = document.createElement('div');
