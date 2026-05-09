@@ -234,6 +234,12 @@ function updateLayoutToggleUI() {
 function initLayoutToggle() {
     const btn = document.getElementById('layoutToggleBtn');
     if (!btn) return;
+    // 移动端直接移除按钮，不留任何痕迹
+    if (window.innerWidth <= 600) {
+        btn.remove();
+        document.querySelector('.record-controls-sep')?.remove();
+        return;
+    }
     btn.addEventListener('click', () => {
         currentLayout = currentLayout === 'grid' ? 'timeline' : 'grid';
         updateLayoutToggleUI();
