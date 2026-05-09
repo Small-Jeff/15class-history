@@ -59,10 +59,15 @@
     <!-- 主内容容器 -->
     <div class="container hidden" id="mainContent">
         <nav class="page-nav">
-            <button class="nav-btn" data-nav="contribute">📝 如何投稿</button>
-            <button class="nav-btn" data-nav="guide">📘 新手指南</button>
-            <button class="nav-btn" data-nav="disclaimer">⚖️ 免责协议</button>
-            <button class="nav-btn" data-nav="joinus">🤝 加入我们</button>
+            <div class="nav-group">
+                <button class="nav-btn" data-nav="contribute">📝 如何投稿</button>
+                <button class="nav-btn" data-nav="joinus">🤝 加入我们</button>
+            </div>
+            <span class="nav-divider" aria-hidden="true">⟡</span>
+            <div class="nav-group">
+                <button class="nav-btn" data-nav="guide">📘 新手指南</button>
+                <button class="nav-btn" data-nav="disclaimer">⚖️ 免责协议</button>
+            </div>
         </nav>
         <!-- 功能栏 -->
         <div class="function-bar">
@@ -86,6 +91,7 @@
         <!-- 主类别导航 -->
         <div class="extra-categories">
             <button class="extra-btn active" data-type="zhengshi">📜 正史</button>
+            <button class="extra-btn" data-type="latest">🆕 最新</button>
             <button class="extra-btn" data-type="waishi">📖 外史</button>
             <button class="extra-btn" data-type="xishi">🎭 戏史</button>
             <button class="extra-btn" data-type="characters">👥 相关人物</button>
@@ -130,6 +136,8 @@
                 <option value="length">字数最多</option>
             </select>
             <button id="recordSortOrderBtn" class="sort-order-btn">↓ 降序</button>
+            <span class="record-controls-sep" aria-hidden="true"></span>
+            <button id="layoutToggleBtn" class="layout-toggle-btn" title="切换单排/双排显示">⊞ 双排</button>
         </div>
 
         <!-- 人物排序控件（默认隐藏） -->

@@ -5,18 +5,47 @@
 .page-nav {
     display: flex;
     justify-content: center;
-    gap: 16px;
-    margin-bottom: 24px;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border-light);
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 32px;
+    padding: 10px 24px;
+    background: rgba(11, 12, 14, 0.6);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 12px;
+    z-index: 50;
+    transition: var(--transition);
+}
+
+.page-nav:hover {
+    border-color: var(--border-glow);
+}
+
+/* 按钮分组 */
+.nav-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* 装饰分隔符 */
+.nav-divider {
+    color: var(--accent);
+    font-size: 0.75rem;
+    opacity: 0.5;
+    user-select: none;
+    padding: 0 4px;
 }
 
 .nav-btn {
     background: transparent;
     color: var(--text-secondary);
     border: none;
-    padding: 8px 20px;
-    font-size: 1rem;
+    padding: 6px 16px;
+    font-size: 0.9rem;
     font-weight: 500;
     border-radius: 30px;
     transition: var(--transition);
@@ -24,8 +53,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    -webkit-backdrop-filter: blur(4px);
-    backdrop-filter: blur(4px);
+    white-space: nowrap;
 }
 
 .nav-btn:hover {
@@ -121,12 +149,25 @@
 @media (max-width: 600px) {
     .page-nav {
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 6px;
+        padding: 8px 12px;
+        top: 8px;
+        border-radius: 12px;
+        margin-bottom: 24px;
+    }
+
+    .nav-group {
+        gap: 4px;
+    }
+
+    .nav-divider {
+        padding: 0 2px;
+        font-size: 0.65rem;
     }
 
     .nav-btn {
-        padding: 6px 14px;
-        font-size: 0.9rem;
+        padding: 5px 10px;
+        font-size: 0.8rem;
     }
 
     .extra-categories {
@@ -218,4 +259,42 @@
 
 .record-sort-container select option {
     background: #1a1e26;
+}
+
+/* 史事控件分隔线 */
+.record-controls-sep {
+    width: 1px;
+    height: 24px;
+    background: var(--border-light);
+    opacity: 0.4;
+    flex-shrink: 0;
+}
+
+/* 布局切换按钮 */
+.layout-toggle-btn {
+    padding: 6px 16px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: var(--transition);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.layout-toggle-btn:hover {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.layout-toggle-btn.active {
+    background: var(--accent);
+    color: #0b0c0e;
+    border-color: var(--accent);
 }

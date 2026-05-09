@@ -5,8 +5,10 @@ import { initCardAnimations, addHonorificEffects, triggerViewEnter } from '../ef
 
 export let currentDisplay = 'zhengshi';
 export let currentGrade = '';
+export let currentLayout = 'timeline'; // 'timeline' | 'grid'
 
 const DEFAULT_GRADE = '七下';
+const LATEST_COUNT = 10;
 
 // ---------- 人物排序状态 ----------
 export let currentCharacterSort = {
@@ -20,7 +22,7 @@ export let currentRecordSort = {
     order: 'asc'          // 'asc' | 'desc'
 };
 
-let gradeSubmenu, gradeBtns, zhengshiBtn, waishiBtn, xishiBtn, charsBtn, statsBtn, grid, sortContainer;
+let gradeSubmenu, gradeBtns, zhengshiBtn, latestBtn, waishiBtn, xishiBtn, charsBtn, statsBtn, grid, sortContainer;
 let recordSortContainer, statsContainer, graphToggleContainer;
 
 // ---------- URL 状态管理 ----------
@@ -31,6 +33,9 @@ function updateURLParams() {
         url.searchParams.set('grade', currentGrade);
     } else if (currentDisplay === 'zhengshi') {
         url.searchParams.set('view', 'zhengshi');
+        url.searchParams.delete('grade');
+    } else if (currentDisplay === 'latest') {
+        url.searchParams.set('view', 'latest');
         url.searchParams.delete('grade');
     } else if (currentDisplay === 'waishi') {
         url.searchParams.set('view', 'waishi');
@@ -69,6 +74,8 @@ function restoreFromURL() {
         return { view: 'grade', grade };
     } else if (view === 'zhengshi') {
         return { view: 'zhengshi' };
+    } else if (view === 'latest') {
+        return { view: 'latest' };
     } else if (view === 'waishi') {
         return { view: 'waishi' };
     } else if (view === 'xishi') {
@@ -95,6 +102,7 @@ function initDOMElements() {
     gradeSubmenu = document.getElementById('gradeSubmenu');
     gradeBtns = document.querySelectorAll('.grade-btn');
     zhengshiBtn = document.querySelector('.extra-btn[data-type="zhengshi"]');
+    latestBtn = document.querySelector('.extra-btn[data-type="latest"]');
     waishiBtn = document.querySelector('.extra-btn[data-type="waishi"]');
     xishiBtn = document.querySelector('.extra-btn[data-type="xishi"]');
     charsBtn = document.querySelector('.extra-btn[data-type="characters"]');
@@ -120,6 +128,7 @@ function refreshUI() {
     initCardAnimations();
     addHonorificEffects();
     updateSearchTriggerPlaceholder();
+    applyTimelineLayout();
     // 触发内容区入场动画
     if (grid && !grid.classList.contains('characters-mode')) {
         triggerViewEnter(grid);
@@ -192,12 +201,44 @@ function reRenderCurrentView() {
     } else if (currentDisplay === 'grade') {
         const filtered = historyData.records.filter(r => r.grade === currentGrade);
         renderCards(sortRecords(filtered), grid);
+    } else if (currentDisplay === 'latest') {
+        switchToLatest();
     } else if (currentDisplay === 'waishi') {
         renderCards(sortRecords(extraHistory?.records || []), grid);
     } else if (currentDisplay === 'xishi') {
         renderCards(sortRecords(dramaHistory?.records || []), grid);
     }
     refreshUI();
+}
+
+// ---------- 布局切换 ----------
+function applyTimelineLayout() {
+    const timeline = grid.querySelector('.timeline');
+    if (!timeline) return;
+    if (currentLayout === 'grid') {
+        timeline.classList.add('grid-mode');
+    } else {
+        timeline.classList.remove('grid-mode');
+    }
+}
+
+function updateLayoutToggleUI() {
+    const btn = document.getElementById('layoutToggleBtn');
+    if (!btn) return;
+    const isGrid = currentLayout === 'grid';
+    btn.classList.toggle('active', isGrid);
+    btn.title = isGrid ? '切换到单排' : '切换到双排';
+    btn.innerHTML = isGrid ? '⊞ 单排' : '⊞ 双排';
+}
+
+function initLayoutToggle() {
+    const btn = document.getElementById('layoutToggleBtn');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+        currentLayout = currentLayout === 'grid' ? 'timeline' : 'grid';
+        updateLayoutToggleUI();
+        applyTimelineLayout();
+    });
 }
 
 // ---------- 统计视图 ----------
@@ -224,6 +265,20 @@ export function switchToStats() {
 }
 
 // ---------- 视图切换 ----------
+export function switchToLatest() {
+    currentDisplay = 'latest';
+    hideAllExtra();
+    // 收集所有正史记录，按日期降序取最新 N 条
+    const allRecords = historyData.records.filter(r => r.date);
+    const dateDesc = (a, b) => new Date(b.date) - new Date(a.date) || 0;
+    const latest = [...allRecords].sort(dateDesc).slice(0, LATEST_COUNT);
+    renderCards(latest, grid);
+    grid.classList.remove('characters-mode');
+    showGradeSubmenu(false);
+    updateURLParams();
+    refreshUI();
+}
+
 export function switchToZhengshi() {
     currentDisplay = 'zhengshi';
     hideAllExtra();
@@ -368,8 +423,10 @@ export function initControls() {
     initDOMElements();
     initCharacterSortControls(); // 初始化人物排序控件
     initRecordSortControls();    // 初始化史事排序控件
+    initLayoutToggle();          // 初始化布局切换
 
     zhengshiBtn.addEventListener('click', () => { setActiveMain(zhengshiBtn); switchToZhengshi(); });
+    latestBtn.addEventListener('click', () => { setActiveMain(latestBtn); switchToLatest(); });
     gradeBtns.forEach(btn => {
         btn.addEventListener('click', () => { setActiveMain(zhengshiBtn); switchToGrade(btn.dataset.grade); });
     });
@@ -395,6 +452,9 @@ export function initControls() {
             switchToGrade(restored.grade);
         } else if (restored.view === 'zhengshi') {
             switchToZhengshi();
+        } else if (restored.view === 'latest') {
+            setActiveMain(latestBtn);
+            switchToLatest();
         } else if (restored.view === 'waishi') {
             setActiveMain(waishiBtn);
             switchToWaishi();
@@ -419,6 +479,7 @@ export function initControls() {
 export function getCurrentDataSource() {
     if (currentDisplay === 'zhengshi') return historyData.records;
     if (currentDisplay === 'grade') return historyData.records.filter(r => r.grade === currentGrade);
+    if (currentDisplay === 'latest') return historyData.records.filter(r => r.date).sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, LATEST_COUNT);
     if (currentDisplay === 'waishi') return extraHistory?.records || [];
     if (currentDisplay === 'xishi') return dramaHistory?.records || [];
     return [];
