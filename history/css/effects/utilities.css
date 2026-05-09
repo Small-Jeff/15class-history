@@ -22,9 +22,10 @@
     animation: pulse-glow 0.5s;
 }
 
-/* 返回顶部按钮默认隐藏 */
+/* 返回顶部按钮默认隐藏（由 JS 控制 opacity + pointer-events） */
 .back-to-top {
-    display: none;
+    opacity: 0;
+    pointer-events: none;
 }
 
 /* 滚动条 */

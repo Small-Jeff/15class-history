@@ -7,20 +7,21 @@
 }
 
 .graph-toggle-btn {
-    padding: 8px 24px;
+    padding: 5px 20px;
     background: transparent;
-    color: var(--text-secondary);
-    border: 1px solid var(--border-light);
-    border-radius: 30px;
-    font-size: 0.95rem;
+    color: var(--text-muted);
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 400;
     cursor: pointer;
     transition: var(--transition);
+    border-bottom: 2px solid transparent;
 }
 
 .graph-toggle-btn:hover {
     background: var(--accent-dim);
     color: var(--accent);
-    border-color: var(--accent);
 }
 
 .graph-modal .modal-container {

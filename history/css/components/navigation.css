@@ -76,16 +76,17 @@
 }
 
 .extra-btn {
-    background: transparent;
+    background: rgba(255, 255, 255, 0.03);
     color: var(--text-secondary);
     border: 1px solid var(--border-light);
-    padding: 8px 28px;
+    padding: 9px 32px;
     border-radius: 40px;
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 500;
     transition: var(--transition);
     -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
+    letter-spacing: 0.02em;
 }
 
 .extra-btn:hover {
@@ -99,16 +100,30 @@
     background: var(--accent);
     color: #0b0c0e;
     border-color: var(--accent);
-    box-shadow: 0 4px 12px rgba(201, 169, 89, 0.3);
+    box-shadow: 0 4px 16px rgba(201, 169, 89, 0.35);
+    transform: translateY(0);
 }
 
-/* 年级子菜单 */
+/* 年级子菜单 — 从属层级 */
 .grade-submenu {
-    margin: 8px 0 32px;
+    margin: 2px 0 32px;
     text-align: center;
     transition: opacity 0.2s, transform 0.2s;
     opacity: 1;
     transform: translateY(0);
+    /* 上方细线表明从属关系 */
+    padding-top: 12px;
+    position: relative;
+}
+
+.grade-submenu::before {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.25;
+    margin: 0 auto 12px;
 }
 
 .grade-submenu.hidden {
@@ -119,31 +134,33 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
+    gap: 6px;
 }
 
 .grade-btn {
     background: transparent;
-    color: var(--text-secondary);
-    border: 1px solid var(--border-light);
-    padding: 6px 20px;
-    border-radius: 30px;
-    font-size: 0.9rem;
-    font-weight: 500;
+    color: var(--text-muted);
+    border: none;
+    padding: 5px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 400;
     transition: var(--transition);
+    position: relative;
+    border-bottom: 2px solid transparent;
 }
 
 .grade-btn:hover {
     background: var(--accent-dim);
     color: var(--accent);
-    border-color: var(--accent);
 }
 
 .grade-btn.active {
-    background: var(--accent);
-    color: #0b0c0e;
-    border-color: var(--accent);
-    box-shadow: 0 2px 8px rgba(201, 169, 89, 0.25);
+    background: transparent;
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    font-weight: 500;
+    box-shadow: none;
 }
 
 @media (max-width: 600px) {
@@ -170,6 +187,13 @@
         font-size: 0.8rem;
     }
 
+    .layout-toggle-btn {
+        display: none;
+    }
+    .record-controls-sep {
+        display: none;
+    }
+
     .extra-categories {
         gap: 8px;
     }
@@ -180,7 +204,7 @@
     }
 
     .grade-btn {
-        padding: 5px 16px;
+        padding: 4px 12px;
         font-size: 0.8rem;
     }
 }
