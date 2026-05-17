@@ -19,7 +19,7 @@ async function hashPassword(password) {
 
 function escapeHtml(str) {
     if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
+    return str.replace(/[&<>]/g, function (m) {
         if (m === '&') return '&amp;';
         if (m === '<') return '&lt;';
         if (m === '>') return '&gt;';
@@ -31,7 +31,7 @@ function showWelcomeMessage(username, isDev = false) {
     const hero = document.querySelector('.hero');
     const welcomeDiv = document.createElement('div');
     welcomeDiv.className = 'welcome-message';
-    welcomeDiv.innerHTML = isDev 
+    welcomeDiv.innerHTML = isDev
         ? `<span>✨ 开发模式，已跳过验证 ✨</span>`
         : `<span>✨ 欢迎！${escapeHtml(username)} ✨</span>`;
     hero.insertAdjacentElement('afterend', welcomeDiv);
