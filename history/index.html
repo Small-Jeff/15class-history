@@ -1,173 +1,217 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
 
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
 
     <title>2025级15班 · 班级史记</title>
 
     <!-- 模块化 CSS -->
     <!-- 首屏关键样式（同步加载） -->
-    <link rel="stylesheet" href="css/base/base.css">
-    <link rel="stylesheet" href="css/layout/layout.css">
-    <link rel="stylesheet" href="css/components/navigation.css">
-    <link rel="stylesheet" href="css/components/timeline.css">
-    <link rel="stylesheet" href="css/components/buttons.css">
-    <link rel="stylesheet" href="css/effects/animations.css">
-    <link rel="stylesheet" href="css/effects/utilities.css">
-    <link rel="stylesheet" href="css/components/loading.css">
+    <link rel="stylesheet" href="css/base/base.css" />
+    <link rel="stylesheet" href="css/layout/layout.css" />
+    <link rel="stylesheet" href="css/components/navigation.css" />
+    <link rel="stylesheet" href="css/components/timeline.css" />
+    <link rel="stylesheet" href="css/components/buttons.css" />
+    <link rel="stylesheet" href="css/effects/animations.css" />
+    <link rel="stylesheet" href="css/effects/utilities.css" />
+    <link rel="stylesheet" href="css/components/loading.css" />
 
     <!-- 非首屏样式（延迟加载） -->
-    <link rel="preload" href="css/components/search.css" as="style">
-    <link rel="preload" href="css/components/modal.css" as="style">
-    <link rel="preload" href="css/components/characters.css" as="style">
-    <link rel="preload" href="css/components/random.css" as="style">
-    <link rel="preload" href="css/components/stats.css" as="style">
-    <link rel="preload" href="css/components/graph.css" as="style">
-    <link rel="preload" href="css/components/comments.css" as="style">
+    <link rel="preload" href="css/components/search.css" as="style" />
+    <link rel="preload" href="css/components/modal.css" as="style" />
+    <link rel="preload" href="css/components/characters.css" as="style" />
+    <link rel="preload" href="css/components/random.css" as="style" />
+    <link rel="preload" href="css/components/stats.css" as="style" />
+    <link rel="preload" href="css/components/graph.css" as="style" />
+    <link rel="preload" href="css/components/comments.css" as="style" />
     <script>
-    (function(){var d=["css/components/search.css","css/components/modal.css","css/components/characters.css","css/components/random.css","css/components/stats.css","css/components/graph.css","css/components/comments.css"];d.forEach(function(h){var l=document.createElement("link");l.rel="stylesheet";l.href=h;document.head.appendChild(l)})})();
+      (function () {
+        var d = [
+          "css/components/search.css",
+          "css/components/modal.css",
+          "css/components/characters.css",
+          "css/components/random.css",
+          "css/components/stats.css",
+          "css/components/graph.css",
+          "css/components/comments.css",
+        ];
+        d.forEach(function (h) {
+          var l = document.createElement("link");
+          l.rel = "stylesheet";
+          l.href = h;
+          document.head.appendChild(l);
+        });
+      })();
     </script>
 
     <!-- JavaScript -->
     <script src="data.js" defer></script>
     <script src="auth.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/vis-network@9.1.9/standalone/umd/vis-network.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"
+      defer
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/vis-network@9.1.9/standalone/umd/vis-network.min.js"
+      defer
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"
+      defer
+    ></script>
     <script type="module" src="js/core/main.js" defer></script>
+  </head>
 
-</head>
-
-<body>
+  <body>
     <!-- 密码验证模态框（保持不变） -->
     <div id="authModal" class="auth-modal">
-        <div class="auth-modal-content">
-            <h2>📜 班史准入</h2>
-            <p>请输入您的姓名与密码，方可阅览2025级15班班级史记</p>
-            <div class="protected-tip">🔒 受保护内容，请输入密码</div>
-            <input type="text" id="username" placeholder="姓名" autocomplete="off">
-            <input type="password" id="password" placeholder="密码">
-            <button id="authBtn">入史</button>
-            <div id="authError" class="auth-error"></div>
-        </div>
+      <div class="auth-modal-content">
+        <h2>📜 班史准入</h2>
+        <p>请输入您的姓名与密码，方可阅览2025级15班班级史记</p>
+        <div class="protected-tip">🔒 受保护内容，请输入密码</div>
+        <input
+          type="text"
+          id="username"
+          placeholder="姓名"
+          autocomplete="off"
+        />
+        <input type="password" id="password" placeholder="密码" />
+        <button id="authBtn">入史</button>
+        <div id="authError" class="auth-error"></div>
+      </div>
     </div>
 
     <!-- 主内容容器 -->
     <div class="container hidden" id="mainContent">
-        <nav class="page-nav">
-            <div class="nav-group">
-                <button class="nav-btn" data-nav="contribute">📝 如何投稿</button>
-                <button class="nav-btn" data-nav="joinus">🤝 加入我们</button>
-            </div>
-            <span class="nav-divider" aria-hidden="true">⟡</span>
-            <div class="nav-group">
-                <button class="nav-btn" data-nav="guide">📘 新手指南</button>
-                <button class="nav-btn" data-nav="disclaimer">⚖️ 免责协议</button>
-            </div>
-        </nav>
-        <!-- 功能栏 -->
-        <div class="function-bar">
-            <div class="search-section">
-                <div class="search-trigger-box" id="searchTrigger">
-                    <span class="search-icon">🔍</span>
-                    <span class="search-placeholder">点击打开搜索...</span>
-                </div>
-            </div>
-            <div class="random-section">
-                <button id="randomBtn">🎲 随机品读</button>
-            </div>
+      <nav class="page-nav">
+        <div class="nav-group">
+          <button class="nav-btn" data-nav="contribute">📝 如何投稿</button>
+          <button class="nav-btn" data-nav="joinus">🤝 加入我们</button>
         </div>
-
-        <!-- 标题 -->
-        <header class="hero">
-            <h1>15班史记</h1>
-            <p>七上至九下 · 英雄志与荒诞事</p>
-        </header>
-
-        <!-- 主类别导航 -->
-        <div class="extra-categories">
-            <button class="extra-btn active" data-type="zhengshi">📜 正史</button>
-            <button class="extra-btn" data-type="latest">🆕 最新</button>
-            <button class="extra-btn" data-type="waishi">📖 外史</button>
-            <button class="extra-btn" data-type="xishi">🎭 戏史</button>
-            <button class="extra-btn" data-type="characters">👥 相关人物</button>
-            <button class="extra-btn" data-type="stats">📊 统计</button>
+        <span class="nav-divider" aria-hidden="true">⟡</span>
+        <div class="nav-group">
+          <button class="nav-btn" data-nav="guide">📘 新手指南</button>
+          <button class="nav-btn" data-nav="disclaimer">⚖️ 免责协议</button>
         </div>
-
-        <!-- 人物关联图按钮（人物视图下显示） -->
-        <div id="graphToggleContainer" class="graph-toggle-container hidden">
-            <button id="graphToggleBtn" class="graph-toggle-btn">🔗 关系图谱</button>
+      </nav>
+      <!-- 功能栏 -->
+      <div class="function-bar">
+        <div class="search-section">
+          <div class="search-trigger-box" id="searchTrigger">
+            <span class="search-icon">🔍</span>
+            <span class="search-placeholder">点击打开搜索...</span>
+          </div>
         </div>
-
-        <!-- 统计容器（默认隐藏） -->
-        <div id="statsContainer" class="stats-container hidden">
-            <div class="stats-tabs">
-                <button class="stats-tab active" data-chart="characters">👤 人物榜</button>
-                <button class="stats-tab" data-chart="length">📏 字数分布</button>
-                <button class="stats-tab" data-chart="timeline">📅 时间分布</button>
-            </div>
-            <div class="stats-charts">
-                <canvas id="statsChart"></canvas>
-            </div>
+        <div class="random-section">
+          <button id="randomBtn">🎲 随机品读</button>
         </div>
+      </div>
 
-        <!-- 年级子菜单 -->
-        <div class="grade-submenu" id="gradeSubmenu">
-            <div class="grade-buttons">
-                <button class="grade-btn" data-grade="七上">七上</button>
-                <button class="grade-btn" data-grade="七下">七下</button>
-                <button class="grade-btn" data-grade="八上">八上</button>
-                <button class="grade-btn" data-grade="八下">八下</button>
-                <button class="grade-btn" data-grade="九上">九上</button>
-                <button class="grade-btn" data-grade="九下">九下</button>
-            </div>
+      <!-- 标题 -->
+      <header class="hero">
+        <h1>15班史记</h1>
+        <p>七上至九下 · 英雄志与荒诞事</p>
+      </header>
+
+      <!-- 主类别导航 -->
+      <div class="extra-categories">
+        <button class="extra-btn active" data-type="zhengshi">📜 正史</button>
+        <button class="extra-btn" data-type="latest">🆕 最新</button>
+        <button class="extra-btn" data-type="waishi">📖 外史</button>
+        <button class="extra-btn" data-type="xishi">🎭 戏史</button>
+        <button class="extra-btn" data-type="characters">👥 相关人物</button>
+        <button class="extra-btn" data-type="stats">📊 统计</button>
+      </div>
+
+      <!-- 人物关联图按钮（人物视图下显示） -->
+      <div id="graphToggleContainer" class="graph-toggle-container hidden">
+        <button id="graphToggleBtn" class="graph-toggle-btn">
+          🔗 关系图谱
+        </button>
+      </div>
+
+      <!-- 统计容器（默认隐藏） -->
+      <div id="statsContainer" class="stats-container hidden">
+        <div class="stats-tabs">
+          <button class="stats-tab active" data-chart="characters">
+            👤 人物榜
+          </button>
+          <button class="stats-tab" data-chart="length">📏 字数分布</button>
+          <button class="stats-tab" data-chart="timeline">📅 时间分布</button>
         </div>
-
-        <!-- 史事排序控件（默认隐藏，正史/外史/戏史视图显示） -->
-        <div id="recordSortContainer" class="record-sort-container hidden">
-            <label for="recordSortSelect">排序：</label>
-            <select id="recordSortSelect">
-                <option value="date">时间顺序</option>
-                <option value="characters">涉及人物最多</option>
-                <option value="length">字数最多</option>
-            </select>
-            <button id="recordSortOrderBtn" class="sort-order-btn">↓ 降序</button>
-            <span class="record-controls-sep" aria-hidden="true"></span>
-            <button id="layoutToggleBtn" class="layout-toggle-btn" title="切换单排/双排显示">⊞ 双排</button>
+        <div class="stats-charts">
+          <canvas id="statsChart"></canvas>
         </div>
+      </div>
 
-        <!-- 人物排序控件（默认隐藏） -->
-        <div id="characterSortContainer" class="character-sort-container hidden">
-            <label for="characterSortSelect">排序：</label>
-            <select id="characterSortSelect">
-                <option value="popularity">最热门（涉及史事）</option>
-                <option value="alphabet">首字母</option>
-                <option value="descLength">详情字数</option>
-            </select>
-            <button id="characterSortOrderBtn" class="sort-order-btn">↓ 降序</button>
+      <!-- 年级子菜单 -->
+      <div class="grade-submenu" id="gradeSubmenu">
+        <div class="grade-buttons">
+          <button class="grade-btn" data-grade="七上">七上</button>
+          <button class="grade-btn" data-grade="七下">七下</button>
+          <button class="grade-btn" data-grade="八上">八上</button>
+          <button class="grade-btn" data-grade="八下">八下</button>
+          <button class="grade-btn" data-grade="九上">九上</button>
+          <button class="grade-btn" data-grade="九下">九下</button>
         </div>
+      </div>
 
-        <!-- 动态内容容器 -->
-        <div class="chronicle-grid" id="chronicleGrid"></div>
+      <!-- 史事排序控件（默认隐藏，正史/外史/戏史视图显示） -->
+      <div id="recordSortContainer" class="record-sort-container hidden">
+        <label for="recordSortSelect">排序：</label>
+        <select id="recordSortSelect">
+          <option value="date">时间顺序</option>
+          <option value="characters">涉及人物最多</option>
+          <option value="length">字数最多</option>
+        </select>
+        <button id="recordSortOrderBtn" class="sort-order-btn">↓ 降序</button>
+        <span class="record-controls-sep" aria-hidden="true"></span>
+        <button
+          id="layoutToggleBtn"
+          class="layout-toggle-btn"
+          title="切换单排/双排显示"
+        >
+          ⊞ 双排
+        </button>
+      </div>
 
-        <footer>
-            <p>© <span id="currentYear"></span> 壹拾伍班班史编纂委员会 · 岁在丙午</p>
-            <div class="footer-motto">—— 笔落惊风雨，史成泣鬼神 ——</div>
-        </footer>
+      <!-- 人物排序控件（默认隐藏） -->
+      <div id="characterSortContainer" class="character-sort-container hidden">
+        <label for="characterSortSelect">排序：</label>
+        <select id="characterSortSelect">
+          <option value="popularity">最热门（涉及史事）</option>
+          <option value="alphabet">首字母</option>
+          <option value="descLength">详情字数</option>
+        </select>
+        <button id="characterSortOrderBtn" class="sort-order-btn">
+          ↓ 降序
+        </button>
+      </div>
+
+      <!-- 动态内容容器 -->
+      <div class="chronicle-grid" id="chronicleGrid"></div>
+
+      <footer>
+        <p>
+          © <span id="currentYear"></span> 壹拾伍班班史编纂委员会 · 岁在丙午
+        </p>
+        <div class="footer-motto">—— 笔落惊风雨，史成泣鬼神 ——</div>
+      </footer>
     </div>
 
     <!-- 返回顶部按钮 -->
     <button id="backToTop" class="back-to-top" aria-label="返回顶部">↑</button>
 
     <script>
-        document.getElementById('currentYear').innerText = new Date().getFullYear();
+      document.getElementById("currentYear").innerText =
+        new Date().getFullYear();
     </script>
-</body>
-
+  </body>
 </html>
 
 <!--
